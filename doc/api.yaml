@@ -1,0 +1,73 @@
+openapi: 3.0.0
+servers:
+  - url: "http://localhost:3000"
+info:
+  title: WasaText API
+  description: API for the WasaText platform.
+  version: 1.0.0
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - BearerAuth: []
+paths:
+  /login:
+    post:
+      summary: User login
+      operationId: doLogin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+  /get-users:
+    get:
+      summary: Search for registered users
+      operationId: getUsers
+      parameters:
+        - name: search
+          in: query
+          required: true
+          description: Search query
+          schema:
+            type: string
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: List of users
+        "401":
+          description: Unauthorized
+  /get-conversations:
+    post:
+      summary: Fetch user conversations
+      operationId: getConversations
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: List of user conversations
+        "401":
+          description: Unauthorized
