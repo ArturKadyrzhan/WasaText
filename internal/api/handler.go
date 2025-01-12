@@ -24,7 +24,7 @@ func (h *Handler) doLogin(w http.ResponseWriter, r *http.Request) {
 		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
 		return
 	}
-	fmt.Println(input, "error zdes' tt")
+	//fmt.Println(input, "error zdes' tt")
 	user, err := h.Service.CreateOrGetUser(&input)
 	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError("Failed to retrieve token", http.StatusBadRequest))
@@ -43,6 +43,7 @@ func (h *Handler) doLogin(w http.ResponseWriter, r *http.Request) {
 		"username": user.Username,
 	}
 
+	fmt.Println(token)
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(res)
 	if err != nil {

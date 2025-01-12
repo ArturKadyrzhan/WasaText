@@ -20,10 +20,6 @@ func main() {
 	if err != nil {
 		logrus.Fatalf("error loading .env file: %v", err.Error())
 	}
-	//dbConfig, err := env.GetDbConfigWithEnvs()
-	//if err != nil {
-	//	logrus.Fatalf("error database connection: %v", err.Error())
-	//}
 	db, err := gorm.NewGormSqliteDB()
 
 	if err != nil {

@@ -1,23 +1,36 @@
 openapi: 3.0.0
-servers:
-  - url: "http://localhost:3000"
 info:
   title: WasaText API
-  description: API for the WasaText platform.
-  version: 1.0.0
+  description: API documentation for the WasaText backend.
+  version: "1.0.0"
+
+servers:
+  - url: http://localhost:3000
+
 components:
   securitySchemes:
-    BearerAuth:
+    bearerAuth:
       type: http
       scheme: bearer
-      bearerFormat: JWT
-security:
-  - BearerAuth: []
+
 paths:
+  /health/alive:
+    get:
+      summary: Check if the server is alive.
+      responses:
+        '200':
+          description: Server is alive.
+
+  /health/ready:
+    get:
+      summary: Check if the server is ready.
+      responses:
+        '200':
+          description: Server is ready.
+
   /login:
     post:
-      summary: User login
-      operationId: doLogin
+      summary: Authenticate a user and get a token.
       requestBody:
         required: true
         content:
@@ -29,45 +42,274 @@ paths:
                   type: string
                 password:
                   type: string
-              required:
-                - username
-                - password
       responses:
-        "200":
-          description: Login successful
+        '200':
+          description: User authenticated successfully.
           content:
             application/json:
               schema:
                 type: object
                 properties:
+                  id:
+                    type: integer
+                  username:
+                    type: string
                   token:
                     type: string
+
   /get-users:
     get:
-      summary: Search for registered users
-      operationId: getUsers
+      summary: Retrieve a list of users.
+      security:
+        - bearerAuth: []
       parameters:
         - name: search
           in: query
-          required: true
-          description: Search query
+          description: Search term to filter users.
           schema:
             type: string
-      security:
-        - BearerAuth: []
       responses:
-        "200":
-          description: List of users
-        "401":
-          description: Unauthorized
+        '200':
+          description: List of users retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        username:
+                          type: string
+
+  /upload-profile-picture:
+    post:
+      summary: Upload a new profile picture.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Profile picture uploaded successfully.
+
+  /add-users-to-group:
+    post:
+      summary: Add users to a group.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                groupId:
+                  type: integer
+                userIds:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          description: Users added to the group successfully.
+
   /get-conversations:
     post:
-      summary: Fetch user conversations
-      operationId: getConversations
+      summary: Retrieve all conversations.
       security:
-        - BearerAuth: []
+        - bearerAuth: []
       responses:
-        "200":
-          description: List of user conversations
-        "401":
-          description: Unauthorized
+        '200':
+          description: List of conversations retrieved successfully.
+
+  /get-messages:
+    post:
+      summary: Retrieve messages in a conversation.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                conversationId:
+                  type: integer
+      responses:
+        '200':
+          description: Messages retrieved successfully.
+
+  /create-group:
+    post:
+      summary: Create a new group.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                members:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          description: Group created successfully.
+
+  /leave-group:
+    post:
+      summary: Leave a group.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                groupId:
+                  type: integer
+      responses:
+        '200':
+          description: Left the group successfully.
+
+  /send-message:
+    post:
+      summary: Send a message in a conversation.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                conversationId:
+                  type: integer
+                senderId:
+                  type: integer
+                content:
+                  type: string
+                messageType:
+                  type: string
+      responses:
+        '200':
+          description: Message sent successfully.
+
+  /mark-as-read:
+    post:
+      summary: Mark messages as read.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                messageIds:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          description: Messages marked as read.
+
+  /delete-message:
+    post:
+      summary: Delete a message.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                messageId:
+                  type: integer
+      responses:
+        '200':
+          description: Message deleted successfully.
+
+  /comment-message:
+    post:
+      summary: Comment on a message.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                messageId:
+                  type: integer
+                comment:
+                  type: string
+      responses:
+        '200':
+          description: Comment added to the message successfully.
+
+  /uncomment-message:
+    post:
+      summary: Remove a comment from a message.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                messageId:
+                  type: integer
+      responses:
+        '200':
+          description: Comment removed successfully.
+
+  /forward-message:
+    post:
+      summary: Forward a message to another conversation.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                messageId:
+                  type: integer
+                targetConversationId:
+                  type: integer
+      responses:
+        '200':
+          description: Message forwarded successfully.
