@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: WasaText API
-  description: API documentation for the WasaText backend.
+  description: API documentation for WasaText backend.
   version: "1.0.0"
 
 servers:
@@ -17,6 +17,7 @@ paths:
   /health/alive:
     get:
       summary: Check if the server is alive.
+      operationId: healthCheckAlive
       responses:
         '200':
           description: Server is alive.
@@ -24,6 +25,7 @@ paths:
   /health/ready:
     get:
       summary: Check if the server is ready.
+      operationId: healthCheckReady
       responses:
         '200':
           description: Server is ready.
@@ -31,6 +33,7 @@ paths:
   /login:
     post:
       summary: Authenticate a user and get a token.
+      operationId: doLogin
       requestBody:
         required: true
         content:
@@ -60,6 +63,7 @@ paths:
   /get-users:
     get:
       summary: Retrieve a list of users.
+      operationId: getUsers
       security:
         - bearerAuth: []
       parameters:
@@ -86,50 +90,10 @@ paths:
                         username:
                           type: string
 
-  /upload-profile-picture:
-    post:
-      summary: Upload a new profile picture.
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                file:
-                  type: string
-                  format: binary
-      responses:
-        '200':
-          description: Profile picture uploaded successfully.
-
-  /add-users-to-group:
-    post:
-      summary: Add users to a group.
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                groupId:
-                  type: integer
-                userIds:
-                  type: array
-                  items:
-                    type: integer
-      responses:
-        '200':
-          description: Users added to the group successfully.
-
   /get-conversations:
     post:
       summary: Retrieve all conversations.
+      operationId: getMyConversations
       security:
         - bearerAuth: []
       responses:
@@ -139,6 +103,7 @@ paths:
   /get-messages:
     post:
       summary: Retrieve messages in a conversation.
+      operationId: getConversation
       security:
         - bearerAuth: []
       requestBody:
@@ -154,49 +119,10 @@ paths:
         '200':
           description: Messages retrieved successfully.
 
-  /create-group:
-    post:
-      summary: Create a new group.
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                members:
-                  type: array
-                  items:
-                    type: integer
-      responses:
-        '200':
-          description: Group created successfully.
-
-  /leave-group:
-    post:
-      summary: Leave a group.
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                groupId:
-                  type: integer
-      responses:
-        '200':
-          description: Left the group successfully.
-
   /send-message:
     post:
       summary: Send a message in a conversation.
+      operationId: sendMessage
       security:
         - bearerAuth: []
       requestBody:
@@ -218,29 +144,10 @@ paths:
         '200':
           description: Message sent successfully.
 
-  /mark-as-read:
+  /forward-message:
     post:
-      summary: Mark messages as read.
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                messageIds:
-                  type: array
-                  items:
-                    type: integer
-      responses:
-        '200':
-          description: Messages marked as read.
-
-  /delete-message:
-    post:
-      summary: Delete a message.
+      summary: Forward a message to another conversation.
+      operationId: forwardMessage
       security:
         - bearerAuth: []
       requestBody:
@@ -252,13 +159,16 @@ paths:
               properties:
                 messageId:
                   type: integer
+                targetConversationId:
+                  type: integer
       responses:
         '200':
-          description: Message deleted successfully.
+          description: Message forwarded successfully.
 
   /comment-message:
     post:
       summary: Comment on a message.
+      operationId: commentMessage
       security:
         - bearerAuth: []
       requestBody:
@@ -279,6 +189,7 @@ paths:
   /uncomment-message:
     post:
       summary: Remove a comment from a message.
+      operationId: uncommentMessage
       security:
         - bearerAuth: []
       requestBody:
@@ -294,9 +205,10 @@ paths:
         '200':
           description: Comment removed successfully.
 
-  /forward-message:
+  /delete-message:
     post:
-      summary: Forward a message to another conversation.
+      summary: Delete a message.
+      operationId: deleteMessage
       security:
         - bearerAuth: []
       requestBody:
@@ -308,8 +220,92 @@ paths:
               properties:
                 messageId:
                   type: integer
-                targetConversationId:
+      responses:
+        '200':
+          description: Message deleted successfully.
+
+  /update-group:
+    post:
+      summary: Add users to a group.
+      operationId: addToGroup
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                groupId:
+                  type: integer
+                userIds:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          description: Users added to the group successfully.
+
+  /leave-group:
+    post:
+      summary: Leave a group.
+      operationId: leaveGroup
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                groupId:
                   type: integer
       responses:
         '200':
-          description: Message forwarded successfully.
+          description: Left the group successfully.
+
+  /create-group:
+    post:
+      summary: Create a new group.
+      operationId: setGroupName
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                members:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          description: Group created successfully.
+
+  /upload-profile-picture:
+    post:
+      summary: Upload a new profile picture.
+      operationId: setMyPhoto
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Profile picture uploaded successfully.
+
