@@ -228,13 +228,13 @@
          return;
        }
        const isGroup = userOrGroup.Name !== undefined;
-       // Собираем URL вручную
+       // Getting url manually
        const entity = encodeURIComponent(JSON.stringify(userOrGroup));
        const isGroupParam = isGroup ? 'true' : 'false';
 
-       // Изменяем URL
+       // changing URL
        window.location.href = `#/conversation?entity=${entity}&isGroup=${isGroupParam}`;
-       // Принудительная перезагрузка страницы
+       // Reset page
        window.location.reload();
      },
      logout() {

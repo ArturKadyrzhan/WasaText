@@ -1,7 +1,7 @@
 import { reactive } from 'vue';
 
 export const authState = reactive({
-    isLoggedIn: false, // Tracks if the user is logged in
+    isLoggedIn: false, // It Tracks if the user is logged in
 });
 
 export function checkLoginStatus() {

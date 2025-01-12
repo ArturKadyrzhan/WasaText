@@ -4,9 +4,9 @@ import "time"
 
 type Conversation struct {
 	ID        uint  ` gorm:"primaryKey"`
-	User1ID   *uint // NULL для групп
-	User2ID   *uint // NULL для групп
-	GroupID   *uint // NULL для личных бесед
+	User1ID   *uint // NULL for groups
+	User2ID   *uint // NULL for local conversations
+	GroupID   *uint // NULL for local conversations
 	IsGroup   bool
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`

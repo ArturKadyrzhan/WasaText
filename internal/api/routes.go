@@ -51,7 +51,7 @@ func enableCORS(w http.ResponseWriter, r *http.Request) {
 	log.Printf("CORS headers set for %s", r.Method)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Max-Age", "1")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173") // Разрешаем запросы с порта 5173
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173") // Allowing requests from port 5173
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")

@@ -39,10 +39,6 @@ func (r *Repository) GetUser(user *models.User) (*models.User, error) {
 
 }
 
-//обращение к датабэйз напиши сам буквально одна строка, Может быть несколько юзеров,
-//функция принимает стринг в query, по нему база должна найти все совпадающие юзеры,
-//"неважно  будет ли совпадать одна буква или все буквы
-
 func (r *Repository) GetUsers(query string, userId uint) (*[]models.User, error) {
 	var users []models.User
 	if err := r.database.Where("LOWER(username) LIKE ? AND id != ?",

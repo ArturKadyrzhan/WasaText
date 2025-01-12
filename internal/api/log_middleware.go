@@ -10,23 +10,22 @@ import (
 	"time"
 )
 
-//мидлвэйр нам нужны чтобы поймать запрос до того как он вошел в апи, пока не взломал,
-//может мошенник, в нашем случе
+//I used middleware for catch request until it enter api,for security maybe if someone hacks
 
-// Структура для логирования ответа
+// Structure of logging response
 type loggingResponseWriter struct {
 	http.ResponseWriter
 	statusCode int
 	size       int
 }
 
-// Переопределение метода WriteHeader для захвата статуса
+// WriteHeader Override  method to catch status
 func (lrw *loggingResponseWriter) WriteHeader(code int) {
 	lrw.statusCode = code
 	lrw.ResponseWriter.WriteHeader(code)
 }
 
-// Переопределение метода Write для захвата размера контента
+// Overriding the Write method to capture the content size
 func (lrw *loggingResponseWriter) Write(b []byte) (int, error) {
 	if lrw.statusCode == 0 {
 		// Если статус-код еще не установлен, устанавливаем 200 OK
@@ -37,14 +36,14 @@ func (lrw *loggingResponseWriter) Write(b []byte) (int, error) {
 	return size, err
 }
 
-// Метод Flush для логирования и завершения вывода
+// Flush method for logging and finalizing output
 func (lrw *loggingResponseWriter) Flush() {
 	if fl, ok := lrw.ResponseWriter.(http.Flusher); ok {
 		fl.Flush()
 	}
 }
 
-// Middleware для логирования запросов
+// Middleware for logging requests
 func logRequests(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
@@ -72,7 +71,7 @@ func logRequests(next http.Handler) http.Handler {
 	})
 }
 
-// for web socket,
+// for web
 func (lrw *loggingResponseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 	hj, ok := lrw.ResponseWriter.(http.Hijacker)
 	if !ok {

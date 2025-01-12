@@ -8,7 +8,7 @@ import (
 )
 
 func NewGormSqliteDB() (*gorm.DB, error) {
-	dbFile := "database.db" // Это будет ваш файл SQLite
+	dbFile := "database.db" // SQLite This will be your sql file
 	Database, err := gorm.Open(sqlite.Open(dbFile), &gorm.Config{})
 	if err != nil {
 		fmt.Println("Status:", err)

@@ -62,17 +62,17 @@ func SaveUploadedFile(file multipart.File, header *multipart.FileHeader, uploadD
 		return "", err
 	}
 
-	// Define the file path
+	// Define file path
 	filePath := filepath.Join(uploadDir, filename)
 
-	// Create the file
+	// Create  file
 	out, err := os.Create(filePath)
 	if err != nil {
 		return "", err
 	}
 	defer out.Close()
 
-	// Copy the uploaded file's content to the destination file
+	// Copy the uploaded file's content to  destination file
 	_, err = io.Copy(out, file)
 	if err != nil {
 		return "", err
