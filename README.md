@@ -1,3 +1,3 @@
 # WasaText
 
-Artur text
+Project of WasaText
