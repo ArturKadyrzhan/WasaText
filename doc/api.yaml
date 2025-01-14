@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: WasaText API
-  description: API documentation for WasaText backend.
+  description: API documentation for WasaText,describing every method in routes.go by order
   version: "1.0.0"
 
 servers:
@@ -16,23 +16,65 @@ components:
 paths:
   /health/alive:
     get:
-      summary: Check if the server is alive.
+      summary: Check if the service is alive.
       operationId: healthCheckAlive
       responses:
         '200':
-          description: Server is alive.
+          description: Service is alive.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  success:
+                    type: boolean
+                    example: true
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error occurred"
 
   /health/ready:
     get:
-      summary: Check if the server is ready.
+      summary: Check if the service is ready.
       operationId: healthCheckReady
       responses:
         '200':
-          description: Server is ready.
+          description: Service is ready.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  success:
+                    type: boolean
+                    example: true
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error occurred"
 
   /login:
     post:
-      summary: Authenticate a user and get a token.
+      summary: Authenticate user and get a token.
       operationId: doLogin
       requestBody:
         required: true
@@ -43,11 +85,13 @@ paths:
               properties:
                 username:
                   type: string
+                  example: "Artur"
                 password:
                   type: string
+                  example: "securepassword"
       responses:
         '200':
-          description: User authenticated successfully.
+          description: Successful login.
           content:
             application/json:
               schema:
@@ -55,14 +99,47 @@ paths:
                 properties:
                   id:
                     type: integer
-                  username:
-                    type: string
+                    example: 1
                   token:
                     type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  username:
+                    type: string
+                    example: "Artur"
+        '400':
+          description: Invalid request or missing fields.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Username or password is missing"
+        '401':
+          description: Invalid credentials.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid username or password"
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error occurred"
 
   /get-users:
     get:
-      summary: Retrieve a list of users.
+      summary: Get a list of users by search.
       operationId: getUsers
       security:
         - bearerAuth: []
@@ -92,32 +169,49 @@ paths:
 
   /get-conversations:
     post:
-      summary: Retrieve all conversations.
+      summary: Retrieve your all existing conversations (users and groups).
       operationId: getMyConversations
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       responses:
         '200':
           description: List of conversations retrieved successfully.
-
-  /get-messages:
-    post:
-      summary: Retrieve messages in a conversation.
-      operationId: getConversation
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                conversationId:
-                  type: integer
-      responses:
-        '200':
-          description: Messages retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      groups:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            ID:
+                              type: integer
+                              example: 1
+                            Name:
+                              type: string
+                              example: "Wasa"
+                            GroupPhotoURL:
+                              type: string
+                              example: "webui/public/images/group/1_wasa.jpg"
+                      users:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            ID:
+                              type: integer
+                              example: 2
+                            Username:
+                              type: string
+                              example: "Alina"
+                            ProfilePhotoURL:
+                              type: string
+                              example: "webui/public/images/profile/4_alina.jpg"
 
   /send-message:
     post:
@@ -144,6 +238,67 @@ paths:
         '200':
           description: Message sent successfully.
 
+  /get-messages:
+    post:
+      summary: Get your messages in chat.
+      operationId: getConversation
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                conversationId:
+                  type: integer
+      responses:
+        '200':
+          description: Messages retrieved successfully.
+
+  /mark-as-read:
+    post:
+      summary: Mark messages as read in a conversation.
+      operationId: markAsRead
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                conversationId:
+                  type: integer
+                  example: 1
+                  description: The ID of the conversation.
+                messageIds:
+                  type: array
+                  items:
+                    type: integer
+                  example: [ 101, 102, 103 ]
+                  description: Array of message IDs to mark as read.
+      responses:
+        '200':
+          description: Messages marked as read successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '400':
+          description: Invalid request or missing parameters.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "conversationId and messageIds are required"
   /forward-message:
     post:
       summary: Forward a message to another conversation.
@@ -268,10 +423,8 @@ paths:
 
   /create-group:
     post:
-      summary: Create a new group.
-      operationId: setGroupName
-      security:
-        - bearerAuth: []
+      summary: Create a new group with a name and photo.
+      operationId: createGroup
       requestBody:
         required: true
         content:
@@ -281,13 +434,62 @@ paths:
               properties:
                 name:
                   type: string
-                members:
-                  type: array
-                  items:
-                    type: integer
+                  example: "Wasa Group"
+                  description: The name of the group.
+                groupPhotoURL:
+                  type: string
+                  format: uri
+                  example: "webui/public/images/group/1_group_photo.png"
+                  description: The URL of the group photo.
+                createdBy:
+                  type: integer
+                  example: 3
+                  description: The ID of the user creating the group.
       responses:
         '200':
           description: Group created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  groupId:
+                    type: integer
+                    example: 10
+                  name:
+                    type: string
+                    example: "Wasa Group"
+                  groupPhotoURL:
+                    type: string
+                    format: uri
+                    example: "webui/public/images/group/1_group_photo.png"
+                  createdBy:
+                    type: integer
+                    example: 3
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: "2025-01-13T15:30:00Z"
+        '400':
+          description: Invalid request or missing parameters.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "name and groupPhotoURL are required"
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error occurred"
 
   /upload-profile-picture:
     post:

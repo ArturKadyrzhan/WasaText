@@ -1,0 +1,9 @@
+
+node_modules
+dist
+.nuxt
+.vscode
+.git
+.gitignore
+README.md
+database.db

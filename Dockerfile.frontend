@@ -1,0 +1,23 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Enable Corepack to manage Yarn
+RUN corepack enable
+
+# Set specific Yarn version
+RUN corepack prepare yarn@4.5.0 --activate
+
+# Copy package files
+COPY webui/package.json webui/yarn.lock ./
+
+# Install dependencies using yarn
+RUN yarn install
+
+# Copy the rest of the webui directory
+COPY webui/ .
+
+EXPOSE 5173
+
+# Use yarn to run the dev server
+CMD ["yarn", "dev", "--host"]
