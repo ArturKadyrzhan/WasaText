@@ -1,5 +1,42 @@
 # 🚀 WasaText:
 
+## 1.How to  Run locally
+
+1.0 in gormSQL.go in 1 line set db as:
+```shell
+dbFile := "database.db" // SQLite This will be your sql file
+```
+
+1.1 Run the backend server:
+```shell
+go run cmd/main.go
+```
+1.2.1 Frontend server
+```shell
+./open-node.sh           
+```
+1.2.2
+```shell 
+yarn run dev
+```
+
+Enjoy the project
+
+## OR RUN EVERYTHING WITH DOCKER
+1.0 in gormSQL.go in 1 line set db as:
+```shell
+dbFile := "/app/data/database.db" // Matches your Docker volume setup
+```
+2.0 Build docker in terminal with
+```
+docker-compose up --build
+```
+
+
+
+
+
+## 📂 **Project Structure from Fantastic Coffee**
 
 
 WASAText aims to accomplish the following objectives:
@@ -12,7 +49,10 @@ WASAText aims to accomplish the following objectives:
 
 -Create a Docker container image for deployment.
 
-## 📂 **Project Structure from Fantastic Coffee**
+
+
+
+
 
 ```plaintext
 WasaText
@@ -51,28 +91,6 @@ WasaText
 ```
 
 
-## How to run 
 
-1.Clone the repository:
-```shell
-git clone https://github.com/your-repository.git
-cd wasaText
-```
-
-2.Set up environment variables by creating a .env file with following structure:
-```shell
-SERVER_PORT=3000
-API_SECRET=your-secret
-TTL_HOUR=12
-```
-
-3.Run the backend server:
-```shell
-go run ./cmd/webapi/main.go
-```
-or Everything with Docker
-```
-docker-compose up --build
-```
 
 
