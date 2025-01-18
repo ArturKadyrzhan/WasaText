@@ -1,9 +1,5 @@
-
-node_modules
-dist
-.nuxt
-.vscode
+data/
 .git
 .gitignore
-README.md
-database.db
+*.md
+#/webui/node_modules

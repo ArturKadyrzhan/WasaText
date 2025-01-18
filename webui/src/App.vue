@@ -264,7 +264,6 @@
              Authorization: `Bearer ${getToken()}`,
            },
          });
-
          console.log("Image uploaded:", response.data);
          alert("Profile picture uploaded successfully!");
          window.location.reload();

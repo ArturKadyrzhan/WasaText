@@ -22,8 +22,8 @@ export default defineConfig(({command, mode, ssrBuild}) => {
 }
 )
 
-
-//Suggestion from Disa
+//
+// // from
 // import { defineConfig } from 'vite'
 // import vue from '@vitejs/plugin-vue'
 // import vueDevTools from 'vite-plugin-vue-devtools'
@@ -36,7 +36,7 @@ export default defineConfig(({command, mode, ssrBuild}) => {
 // 	server: {
 // 		proxy: {
 // 			'/webapi': {
-// 				target: 'http://backend:3000',
+// 				target: 'http://localhost:3000',
 // 				changeOrigin: true,
 // 			}
 // 		},

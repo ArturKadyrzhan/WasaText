@@ -48,8 +48,6 @@ func (r *Repository) GetUsers(query string, userId uint) (*[]models.User, error)
 	return &users, nil
 }
 
-//домашка
-
 func (r *Repository) GetConversationsUsers(userId uint) (*[]models.User, error) {
 	var users []models.User
 
