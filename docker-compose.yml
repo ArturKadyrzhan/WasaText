@@ -6,7 +6,6 @@ services:
     ports:
       - "5173:5173"
     environment:
-#      - VITE_API_URL=http://localhost:5173 # Environment variable for frontend
       -  VITE_API_URL=http://localhost:3000
     depends_on:
       - backend

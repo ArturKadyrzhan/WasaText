@@ -8,8 +8,8 @@ import (
 )
 
 func NewGormSqliteDB() (*gorm.DB, error) {
-	dbFile := "database.db" // SQLite This will be your sql file
-	//dbFile := "/app/data/database.db" // Matches your Docker volume setup
+	//dbFile := "database.db" // SQLite This will be your sql file
+	dbFile := "/app/data/database.db" // Matches your Docker volume setup
 	Database, err := gorm.Open(sqlite.Open(dbFile), &gorm.Config{})
 	if err != nil {
 		fmt.Println("Status:", err)
