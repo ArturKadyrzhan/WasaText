@@ -1,81 +1,66 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
-  title: WasaText API
-  description: API documentation for WasaText,describing every method in routes.go by order
-  version: "1.0.0"
+  title: Updated OpenAPI Specification
+  description: Fixed based on error report and professor's feedback (ignoring naming convention on verbs).
+  version: 1.0.0
 
-servers:
-  - url: http://localhost:3000
-
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
+tags:
+  - name: Users
+    description: Operations related to users.
+  - name: Messages
+    description: Operations related to messages.
+  - name: Groups
+    description: Operations related to groups.
+  - name: Authentication
+    description: Authentication operations.
+  - name: Health
+    description: System health endpoints.
 
 paths:
   /health/alive:
     get:
-      summary: Check if the service is alive.
-      operationId: healthCheckAlive
+      tags:
+        - Health
+      summary: Health check (alive)
+      description: Check if the server is alive.
       responses:
         '200':
-          description: Service is alive.
+          description: Server is alive
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  status:
-                    type: integer
-                    example: 200
                   success:
                     type: boolean
-                    example: true
-        '500':
-          description: Internal server error.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Internal server error occurred"
+                  status:
+                    type: integer
 
   /health/ready:
     get:
-      summary: Check if the service is ready.
-      operationId: healthCheckReady
+      tags:
+        - Health
+      summary: Health check (ready)
+      description: Check if the server is ready.
       responses:
         '200':
-          description: Service is ready.
+          description: Server is ready
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  status:
-                    type: integer
-                    example: 200
                   success:
                     type: boolean
-                    example: true
-        '500':
-          description: Internal server error.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Internal server error occurred"
+                  status:
+                    type: integer
 
   /login:
     post:
-      summary: Authenticate user and get a token.
-      operationId: doLogin
+      tags:
+        - Authentication
+      summary: User login
+      description: Authenticate a user.
       requestBody:
         required: true
         content:
@@ -85,165 +70,86 @@ paths:
               properties:
                 username:
                   type: string
-                  example: "Artur"
+                  description: User's username.
+                  minLength: 3
+                  maxLength: 50
+                  example: "johndoe"
                 password:
                   type: string
-                  example: "securepassword"
+                  description: User's password.
+                  minLength: 6
+                  example: "password123"
       responses:
         '200':
-          description: Successful login.
+          description: Login successful
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  id:
-                    type: integer
-                    example: 1
                   token:
                     type: string
-                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                  username:
-                    type: string
-                    example: "Artur"
-        '400':
-          description: Invalid request or missing fields.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Username or password is missing"
-        '401':
-          description: Invalid credentials.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Invalid username or password"
-        '500':
-          description: Internal server error.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Internal server error occurred"
+                    description: Authentication token.
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
 
   /get-users:
     get:
-      summary: Get a list of users by search.
-      operationId: getUsers
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: search
-          in: query
-          description: Search term to filter users.
-          schema:
-            type: string
+      tags:
+        - Users
+      summary: Get all users
+      description: Retrieve a list of all users.
       responses:
         '200':
-          description: List of users retrieved successfully.
+          description: A list of users
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  users:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        username:
-                          type: string
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
 
   /get-conversations:
     post:
-      summary: Retrieve your all existing conversations (users and groups).
-      operationId: getMyConversations
-      security:
-        - bearerAuth: [ ]
+      tags:
+        - Messages
+      summary: Get conversations
+      description: Retrieve a list of user conversations.
       responses:
         '200':
-          description: List of conversations retrieved successfully.
+          description: A list of conversations
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  result:
-                    type: object
-                    properties:
-                      groups:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            ID:
-                              type: integer
-                              example: 1
-                            Name:
-                              type: string
-                              example: "Wasa"
-                            GroupPhotoURL:
-                              type: string
-                              example: "webui/public/images/group/1_wasa.jpg"
-                      users:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            ID:
-                              type: integer
-                              example: 2
-                            Username:
-                              type: string
-                              example: "Alina"
-                            ProfilePhotoURL:
-                              type: string
-                              example: "webui/public/images/profile/4_alina.jpg"
+                type: array
+                items:
+                  $ref: '#/components/schemas/Conversation'
 
   /send-message:
     post:
-      summary: Send a message in a conversation.
-      operationId: sendMessage
-      security:
-        - bearerAuth: []
+      tags:
+        - Messages
+      summary: Send a message
+      description: Create a new message.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                conversationId:
-                  type: integer
-                senderId:
-                  type: integer
-                content:
-                  type: string
-                messageType:
-                  type: string
+              $ref: '#/components/schemas/Message'
       responses:
-        '200':
-          description: Message sent successfully.
+        '201':
+          description: Message sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
 
   /get-messages:
     post:
-      summary: Get your messages in chat.
-      operationId: getConversation
-      security:
-        - bearerAuth: [ ]
+      tags:
+        - Messages
+      summary: Get messages by conversation ID
+      description: Retrieve messages from a specific conversation.
       requestBody:
         required: true
         content:
@@ -252,179 +158,25 @@ paths:
               type: object
               properties:
                 conversationId:
-                  type: integer
-      responses:
-        '200':
-          description: Messages retrieved successfully.
-
-  /mark-as-read:
-    post:
-      summary: Mark messages as read in a conversation.
-      operationId: markAsRead
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                conversationId:
-                  type: integer
-                  example: 1
-                  description: The ID of the conversation.
-                messageIds:
-                  type: array
-                  items:
-                    type: integer
-                  example: [ 101, 102, 103 ]
-                  description: Array of message IDs to mark as read.
-      responses:
-        '200':
-          description: Messages marked as read successfully.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-        '400':
-          description: Invalid request or missing parameters.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "conversationId and messageIds are required"
-  /forward-message:
-    post:
-      summary: Forward a message to another conversation.
-      operationId: forwardMessage
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                messageId:
-                  type: integer
-                targetConversationId:
-                  type: integer
-      responses:
-        '200':
-          description: Message forwarded successfully.
-
-  /comment-message:
-    post:
-      summary: Comment on a message.
-      operationId: commentMessage
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                messageId:
-                  type: integer
-                comment:
                   type: string
+                  description: The ID of the conversation.
+                  example: "conv12345"
       responses:
         '200':
-          description: Comment added to the message successfully.
-
-  /uncomment-message:
-    post:
-      summary: Remove a comment from a message.
-      operationId: uncommentMessage
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                messageId:
-                  type: integer
-      responses:
-        '200':
-          description: Comment removed successfully.
-
-  /delete-message:
-    post:
-      summary: Delete a message.
-      operationId: deleteMessage
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                messageId:
-                  type: integer
-      responses:
-        '200':
-          description: Message deleted successfully.
-
-  /update-group:
-    post:
-      summary: Add users to a group.
-      operationId: addToGroup
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                groupId:
-                  type: integer
-                userIds:
-                  type: array
-                  items:
-                    type: integer
-      responses:
-        '200':
-          description: Users added to the group successfully.
-
-  /leave-group:
-    post:
-      summary: Leave a group.
-      operationId: leaveGroup
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                groupId:
-                  type: integer
-      responses:
-        '200':
-          description: Left the group successfully.
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
 
   /create-group:
     post:
-      summary: Create a new group with a name and photo.
-      operationId: createGroup
+      tags:
+        - Groups
+      summary: Create a group
+      description: Create a new user group.
       requestBody:
         required: true
         content:
@@ -434,80 +186,94 @@ paths:
               properties:
                 name:
                   type: string
-                  example: "Wasa Group"
-                  description: The name of the group.
-                groupPhotoURL:
-                  type: string
-                  format: uri
-                  example: "webui/public/images/group/1_group_photo.png"
-                  description: The URL of the group photo.
-                createdBy:
-                  type: integer
-                  example: 3
-                  description: The ID of the user creating the group.
+                  description: Name of the group.
+                  minLength: 3
+                  maxLength: 100
+                  example: "Study Group"
+                members:
+                  type: array
+                  items:
+                    type: string
+                    description: IDs of group members.
+                    example: "60b8d295f7d1f0001c8e4f3a"
       responses:
-        '200':
-          description: Group created successfully.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  groupId:
-                    type: integer
-                    example: 10
-                  name:
-                    type: string
-                    example: "Wasa Group"
-                  groupPhotoURL:
-                    type: string
-                    format: uri
-                    example: "webui/public/images/group/1_group_photo.png"
-                  createdBy:
-                    type: integer
-                    example: 3
-                  createdAt:
-                    type: string
-                    format: date-time
-                    example: "2025-01-13T15:30:00Z"
-        '400':
-          description: Invalid request or missing parameters.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "name and groupPhotoURL are required"
-        '500':
-          description: Internal server error.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Internal server error occurred"
+        '201':
+          description: Group created successfully
 
-  /upload-profile-picture:
+  /update-group:
     post:
-      summary: Upload a new profile picture.
-      operationId: setMyPhoto
-      security:
-        - bearerAuth: []
+      tags:
+        - Groups
+      summary: Update a group
+      description: Add users to an existing group.
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
               type: object
               properties:
-                file:
+                groupId:
                   type: string
-                  format: binary
+                  description: The ID of the group to update.
+                  example: "grp12345"
+                members:
+                  type: array
+                  items:
+                    type: string
+                    description: IDs of new members.
+                    example: "60b8d295f7d1f0001c8e4f3a"
       responses:
         '200':
-          description: Profile picture uploaded successfully.
+          description: Group updated successfully
 
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the user.
+          example: "60b8d295f7d1f0001c8e4f3a"
+        name:
+          type: string
+          description: The name of the user.
+          example: "John Doe"
+        email:
+          type: string
+          description: The email address of the user.
+          format: email
+          example: "johndoe@example.com"
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the message.
+          example: "msg12345"
+        content:
+          type: string
+          description: The content of the message.
+          minLength: 1
+          maxLength: 1000
+          example: "Hello, how are you?"
+        senderId:
+          type: string
+          description: ID of the user who sent the message.
+          example: "60b8d295f7d1f0001c8e4f3a"
+
+    Conversation:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the conversation.
+          example: "conv12345"
+        participants:
+          type: array
+          items:
+            type: string
+            description: User IDs of participants.
+          example: ["60b8d295f7d1f0001c8e4f3a", "60b8d295f7d1f0001c8e4f4b"]

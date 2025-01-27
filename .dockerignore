@@ -2,4 +2,3 @@ data/
 .git
 .gitignore
 *.md
-#/webui/node_modules
