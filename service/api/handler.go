@@ -1,9 +1,9 @@
 package api
 
 import (
-	"WasaText/cmd/database/models"
-	"WasaText/internal/helpers"
-	"WasaText/internal/service"
+	"WasaText/service/database/models"
+	"WasaText/service/helpers"
+	"WasaText/service/service"
 	"encoding/json"
 	"fmt"
 	"net/http"

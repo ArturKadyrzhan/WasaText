@@ -1,7 +1,7 @@
 package api
 
 import (
-	"WasaText/internal/consts"
+	"WasaText/service/consts"
 	"bufio"
 	"fmt"
 	"log"

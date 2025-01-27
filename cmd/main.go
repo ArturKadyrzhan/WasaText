@@ -1,11 +1,11 @@
 package main
 
 import (
-	"WasaText/cmd/database/gorm"
 	"WasaText/cmd/webapi"
-	"WasaText/internal/api"
-	"WasaText/internal/repositories"
-	"WasaText/internal/service"
+	"WasaText/service/api"
+	"WasaText/service/database/gorm"
+	"WasaText/service/repositories"
+	"WasaText/service/service"
 	"context"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"

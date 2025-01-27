@@ -1,7 +1,7 @@
 package helpers
 
 import (
-	"WasaText/internal/consts"
+	"WasaText/service/consts"
 	"errors"
 	"fmt"
 	"log"

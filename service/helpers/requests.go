@@ -1,6 +1,8 @@
 package helpers
 
-import "WasaText/cmd/database/models"
+import (
+	models2 "WasaText/service/database/models"
+)
 
 type SendMessageRequest struct {
 	Text             string `json:"text"`
@@ -17,14 +19,14 @@ type GetMessagesRequest struct {
 }
 
 type CreateGroupRequest struct {
-	GroupName      string        `json:"groupName"`
-	GroupPhotoPath string        `json:"groupPhotoPath"`
-	Users          []models.User `json:"users"`
+	GroupName      string         `json:"groupName"`
+	GroupPhotoPath string         `json:"groupPhotoPath"`
+	Users          []models2.User `json:"users"`
 }
 
 type AddUsersToGroup struct {
-	GroupId uint          ` json:"groupId"`
-	Users   []models.User `json:"users"`
+	GroupId uint           ` json:"groupId"`
+	Users   []models2.User `json:"users"`
 }
 
 type DeleteMessage struct {
@@ -37,7 +39,7 @@ type CommentMessage struct {
 }
 
 type GroupRequest struct {
-	Group models.Group `json:"group"`
+	Group models2.Group `json:"group"`
 }
 
 type UncommentMessage struct {
@@ -45,8 +47,8 @@ type UncommentMessage struct {
 }
 
 type ForwardMessage struct {
-	MessageId uint          `json:"id"`
-	Text      string        `json:"text"`
-	IsPhoto   bool          `json:"isPhoto"`
-	Users     []models.User `json:"users"`
+	MessageId uint           `json:"id"`
+	Text      string         `json:"text"`
+	IsPhoto   bool           `json:"isPhoto"`
+	Users     []models2.User `json:"users"`
 }

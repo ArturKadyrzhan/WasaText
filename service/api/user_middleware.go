@@ -1,7 +1,7 @@
 package api
 
 import (
-	"WasaText/internal/helpers"
+	"WasaText/service/helpers"
 	"context"
 	"log"
 	"net/http"

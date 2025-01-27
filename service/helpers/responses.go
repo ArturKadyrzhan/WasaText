@@ -1,7 +1,7 @@
 package helpers
 
 import (
-	"WasaText/cmd/database/models"
+	"WasaText/service/database/models"
 	"time"
 )
 

@@ -1,7 +1,7 @@
 package helpers
 
 import (
-	"WasaText/cmd/database/models"
+	"WasaText/service/database/models"
 	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"

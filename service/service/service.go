@@ -1,10 +1,10 @@
 package service
 
 import (
-	"WasaText/cmd/database/models"
-	"WasaText/internal/consts"
-	"WasaText/internal/helpers"
-	"WasaText/internal/repositories"
+	"WasaText/service/consts"
+	models2 "WasaText/service/database/models"
+	"WasaText/service/helpers"
+	"WasaText/service/repositories"
 	"fmt"
 	"slices"
 	"time"
@@ -18,7 +18,7 @@ func NewService(repository *repositories.Repository) *Service {
 	return &Service{Repository: repository}
 }
 
-func (s *Service) CreateOrUpdateUser(user *models.User) (string, error) {
+func (s *Service) CreateOrUpdateUser(user *models2.User) (string, error) {
 	existUser, err := s.Repository.GetUser(user)
 	if err != nil {
 		fmt.Println(err)
@@ -37,7 +37,7 @@ func (s *Service) CreateOrUpdateUser(user *models.User) (string, error) {
 	return helpers.GenerateSessionToken(existUser)
 }
 
-func (s *Service) GetUsers(query string, userId uint) (*[]models.User, error) {
+func (s *Service) GetUsers(query string, userId uint) (*[]models2.User, error) {
 	return s.Repository.GetUsers(query, userId)
 }
 
@@ -60,8 +60,8 @@ func (s *Service) GetConversations(userId uint) (map[string]interface{}, error) 
 
 }
 
-func (s *Service) SendMessage(userId uint, input *helpers.SendMessageRequest) (*models.Message, error) {
-	var conv *models.Conversation
+func (s *Service) SendMessage(userId uint, input *helpers.SendMessageRequest) (*models2.Message, error) {
+	var conv *models2.Conversation
 	var err error
 
 	if !input.IsGroup {
@@ -75,10 +75,10 @@ func (s *Service) SendMessage(userId uint, input *helpers.SendMessageRequest) (*
 			return nil, err
 		}
 	}
-	var message models.Message
+	var message models2.Message
 
 	if input.PhotoPath == "" {
-		message = models.Message{
+		message = models2.Message{
 			ConversationID:   conv.ID,
 			SenderID:         userId,
 			Content:          input.Text,
@@ -87,7 +87,7 @@ func (s *Service) SendMessage(userId uint, input *helpers.SendMessageRequest) (*
 			RepliedMessageID: input.RepliedMessageId,
 		}
 	} else {
-		message = models.Message{
+		message = models2.Message{
 			ConversationID:   conv.ID,
 			SenderID:         userId,
 			Content:          input.PhotoPath,
@@ -101,7 +101,7 @@ func (s *Service) SendMessage(userId uint, input *helpers.SendMessageRequest) (*
 }
 
 func (s *Service) GetMessages(user1ID uint, payload *helpers.GetMessagesRequest) (*[]helpers.MessagesResponse, error) {
-	var messages *[]models.Message
+	var messages *[]models2.Message
 	var err error
 
 	if !payload.IsGroup {
@@ -119,7 +119,7 @@ func (s *Service) GetMessages(user1ID uint, payload *helpers.GetMessagesRequest)
 	var response []helpers.MessagesResponse
 
 	if messages != nil {
-		messageMap := make(map[uint]models.Message)
+		messageMap := make(map[uint]models2.Message)
 		for _, message := range *messages {
 			messageMap[message.ID] = message
 		}
@@ -176,7 +176,7 @@ func (s *Service) GetMessages(user1ID uint, payload *helpers.GetMessagesRequest)
 	return &response, nil
 }
 
-func (s *Service) CreateOrGetUser(user *models.User) (*models.User, error) {
+func (s *Service) CreateOrGetUser(user *models2.User) (*models2.User, error) {
 	existUser, err := s.Repository.GetUser(user)
 	if err != nil {
 		fmt.Println(err)
@@ -196,7 +196,7 @@ func (s *Service) CreateOrGetUser(user *models.User) (*models.User, error) {
 }
 
 func (s *Service) MarkAsRead(userId uint, input *helpers.SendMessageRequest) (bool, error) {
-	var conv *models.Conversation
+	var conv *models2.Conversation
 	var err error
 
 	if !input.IsGroup {
@@ -236,7 +236,7 @@ func (s *Service) CreateGroups(payload *helpers.CreateGroupRequest, addedById ui
 }
 
 func (s *Service) UpdateUserProfile(userId uint, filepath string) (bool, error) {
-	var user models.User
+	var user models2.User
 	user.ID = userId
 	user.ProfilePhotoURL = filepath
 	return s.Repository.UpdateUserProfile(&user)
