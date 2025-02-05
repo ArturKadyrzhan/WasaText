@@ -1,13 +1,11 @@
 package main
 
 import (
-	"WasaText/cmd/webapi"
 	"WasaText/service/api"
 	"WasaText/service/database/gorm"
 	"WasaText/service/repositories"
-	"WasaText/service/service"
 	"context"
-	"github.com/joho/godotenv"
+	"fmt"
 	"github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
@@ -15,12 +13,15 @@ import (
 )
 
 func main() {
-	logrus.SetFormatter(new(logrus.JSONFormatter))
-	err := godotenv.Load()
-	if err != nil {
-		logrus.Fatalf("error loading .env file: %v", err.Error())
+	if err := run(); err != nil {
+		_, _ = fmt.Fprintln(os.Stderr, "error: ", err)
+		os.Exit(1)
 	}
+}
 
+func run() error {
+	logrus.SetFormatter(new(logrus.JSONFormatter))
+	_, err := LoadConfiguration()
 	db, err := gorm.NewGormSqliteDB()
 
 	if err != nil {
@@ -28,10 +29,9 @@ func main() {
 	}
 
 	repository := repositories.NewRepository(db)
-	services := service.NewService(repository)
-	handler := api.NewHandler(services)
+	handler := api.NewHandler(repository)
 
-	srv := new(webapi.Server)
+	srv := new(Server)
 	go func() {
 		if err := srv.Run(os.Getenv("SERVER_PORT"), handler.InitRoutes()); err != nil {
 			logrus.Fatalf("error occured while running http server: %s", err.Error())
@@ -49,5 +49,5 @@ func main() {
 	if err := srv.Shutdown(context.Background()); err != nil {
 		logrus.Errorf("error occured on server shutting down: %s", err.Error())
 	}
-
+	return nil
 }

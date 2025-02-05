@@ -1,37 +1,49 @@
 package api
 
 import (
+	"WasaText/service/consts"
 	"WasaText/service/database/models"
 	"WasaText/service/helpers"
-	"WasaText/service/service"
+	"WasaText/service/repositories"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"slices"
 	"strconv"
+	"time"
 )
 
 type Handler struct {
-	Service *service.Service
+	Repository *repositories.Repository
 }
 
-func NewHandler(service *service.Service) *Handler {
-	return &Handler{Service: service}
+func NewHandler(repository *repositories.Repository) *Handler {
+	return &Handler{Repository: repository}
 }
 
 func (h *Handler) doLogin(w http.ResponseWriter, r *http.Request) {
-	var input models.User
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+	var user models.User
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
 		return
 	}
 	//fmt.Println(input, "error zdes' tt")
-	user, err := h.Service.CreateOrGetUser(&input)
+	existUser, err := h.Repository.GetUser(&user)
 	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError("Failed to retrieve token", http.StatusBadRequest))
 		return
 	}
+	var createdUser *models.User
+	if existUser.ID == 0 {
+		createdUser, err = h.Repository.CreateUser(&user)
+		if err != nil {
+			helpers.HandleError(w, helpers.NewAPIError("Failed to retrieve token", http.StatusBadRequest))
+			return
+		}
 
-	token, err := helpers.GenerateSessionToken(user)
+	}
+
+	token, err := helpers.GenerateSessionToken(createdUser)
 	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError("Failed to retrieve token", http.StatusBadRequest))
 		return
@@ -60,7 +72,7 @@ func (h *Handler) getUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users, err := h.Service.GetUsers(query, userId)
+	users, err := h.Repository.GetUsers(query, userId)
 	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
 		return
@@ -72,17 +84,28 @@ func (h *Handler) getUsers(w http.ResponseWriter, r *http.Request) {
 	err = json.NewEncoder(w).Encode(res)
 	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
+		return
 	}
 
 }
 
 func (h *Handler) getConversations(w http.ResponseWriter, r *http.Request) {
 	userId := r.Context().Value("userId").(uint)
-	info, err := h.Service.GetConversations(userId)
+	info := make(map[string]interface{})
+	users, err := h.Repository.GetConversationsUsers(userId)
 	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
 		return
 	}
+
+	groups, err := h.Repository.GetGroups(userId)
+	if err != nil {
+		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
+		return
+	}
+	fmt.Println(groups, "!!!! ERROR")
+	info["users"] = users
+	info["groups"] = groups
 
 	res := map[string]interface{}{
 		"result": info,
@@ -106,20 +129,20 @@ func (h *Handler) sendMessage(w http.ResponseWriter, r *http.Request) {
 
 	userId := r.Context().Value("userId").(uint)
 
-	result, err := h.Service.SendMessage(userId, &input)
+	result, err := h.SendMessage(userId, &input)
 	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
 		return
 	}
 
-	message, err := helpers.SendMessageResponseHandler(&input, userId, result, false)
+	messageResponse, err := helpers.SendMessageResponseHandler(&input, userId, result, false)
 	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(message)
+	err = json.NewEncoder(w).Encode(messageResponse)
 	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
 		return
@@ -135,13 +158,81 @@ func (h *Handler) getMessages(w http.ResponseWriter, r *http.Request) {
 
 	userId := r.Context().Value("userId").(uint)
 
-	messages, err := h.Service.GetMessages(userId, &convUserId)
-	if err != nil {
-		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
-		return
+	var messages *[]models.Message
+	var err error
+
+	if !convUserId.IsGroup {
+		messages, err = h.Repository.GetPrivateMessages(userId, convUserId.UserOrGroupId)
+		if err != nil {
+			helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
+			return
+		}
+	} else {
+		messages, err = h.Repository.GetGroupMessages(convUserId.UserOrGroupId)
+		if err != nil {
+			helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
+			return
+		}
 	}
 
-	res := map[string][]helpers.MessagesResponse{"messages": *messages}
+	var response []helpers.MessagesResponse
+
+	if messages != nil {
+		messageMap := make(map[uint]models.Message)
+		for _, message := range *messages {
+			messageMap[message.ID] = message
+		}
+
+		for _, message := range *messages {
+
+			var emoji string
+			repliedMessage := helpers.RepliedMessageResponse{}
+
+			if message.Reactions.ID != 0 {
+				emoji = message.Reactions.Reaction
+			}
+
+			if message.RepliedMessageID != nil {
+				repliedMsg, found := messageMap[*message.RepliedMessageID]
+				if found {
+					repliedMessage = helpers.RepliedMessageResponse{
+						MessageId: repliedMsg.ID,
+						Content:   repliedMsg.Content,
+					}
+				}
+			}
+
+			if message.MessageType == consts.MessageTypeText {
+				response = append(response, helpers.MessagesResponse{
+					MessageId:      message.ID,
+					Message:        message.Content,         // Message text
+					UserId:         message.SenderID,        // Sender user ID
+					ConversationId: message.ConversationID,  // Conversation ID
+					Username:       message.Sender.Username, // Conversation ID
+					CreatedAt:      message.CreatedAt,       // Conversation ID
+					IsPhoto:        false,
+					IsRead:         message.IsRead,
+					Emoji:          emoji,
+					RepliedMessage: repliedMessage,
+				})
+			} else {
+				response = append(response, helpers.MessagesResponse{
+					MessageId:      message.ID,
+					Message:        message.Content,         // Message text
+					UserId:         message.SenderID,        // Sender user ID
+					ConversationId: message.ConversationID,  // Conversation ID
+					Username:       message.Sender.Username, // Conversation ID
+					CreatedAt:      message.CreatedAt,       // Conversation ID
+					IsPhoto:        true,
+					IsRead:         message.IsRead,
+					Emoji:          emoji,
+					RepliedMessage: repliedMessage,
+				})
+			}
+		}
+	}
+
+	res := map[string][]helpers.MessagesResponse{"messages": response}
 
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(res)
@@ -159,7 +250,24 @@ func (h *Handler) markAsRead(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := h.Service.MarkAsRead(userId, &input)
+	var conv *models.Conversation
+	var err error
+
+	if !input.IsGroup {
+		conv, err = h.Repository.CheckPrivateConversation(userId, input.ToUserId)
+		if err != nil {
+			helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
+			return
+		}
+	} else {
+		conv, err = h.Repository.CheckGroupConversation(input.GroupId)
+		if err != nil {
+			helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
+			return
+		}
+	}
+
+	result, err := h.Repository.MarkAsRead(conv.ID, userId)
 	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return
@@ -202,7 +310,7 @@ func (h *Handler) createGroup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	file, header, err := r.FormFile("profilePhoto")
-	if err != nil && err != http.ErrMissingFile {
+	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError("Error retrieving file", http.StatusBadRequest))
 		return
 	}
@@ -212,18 +320,32 @@ func (h *Handler) createGroup(w http.ResponseWriter, r *http.Request) {
 		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
 		return
 	}
-
-	result, err := h.Service.CreateGroups(&helpers.CreateGroupRequest{
+	payload := &helpers.CreateGroupRequest{
 		GroupName:      groupName,
 		GroupPhotoPath: filepath,
 		Users:          users,
-	}, userId)
+	}
+	group, err := h.Repository.CreateGroup(payload, userId)
 	if err != nil {
-		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
+		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
 		return
 	}
 
-	res := map[string]bool{"success": result}
+	_, err = h.Repository.CreateGroupMembers(userId, userId, group.ID)
+	if err != nil {
+		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
+		return
+	}
+
+	for _, user := range payload.Users {
+		_, err = h.Repository.CreateGroupMembers(user.ID, userId, group.ID)
+		if err != nil {
+			helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
+			return
+		}
+	}
+
+	res := map[string]bool{"success": true}
 
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(res)
@@ -264,7 +386,7 @@ func (h *Handler) sendPhoto(w http.ResponseWriter, r *http.Request) {
 	}
 
 	file, header, err := r.FormFile("file")
-	if err != nil && err != http.ErrMissingFile {
+	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError("Error retrieving file", http.StatusBadRequest))
 		return
 	}
@@ -282,22 +404,22 @@ func (h *Handler) sendPhoto(w http.ResponseWriter, r *http.Request) {
 		PhotoPath: filepath,
 	}
 
-	result, err := h.Service.SendMessage(userId, &payload)
+	result, err := h.SendMessage(userId, &payload)
 	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError("Failed to send message", http.StatusBadRequest))
 		return
 	}
 
-	message, err := helpers.SendMessageResponseHandler(&payload, userId, result, false)
+	messageResponse, err := helpers.SendMessageResponseHandler(&payload, userId, result, false)
 	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
 		return
 	}
 
-	message["photoPath"] = filepath
+	messageResponse["photoPath"] = filepath
 
 	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(message)
+	err = json.NewEncoder(w).Encode(messageResponse)
 	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
 		return
@@ -327,7 +449,10 @@ func (h *Handler) uploadProfilePicture(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := h.Service.UpdateUserProfile(userId, filepath)
+	var user models.User
+	user.ID = userId
+	user.ProfilePhotoURL = filepath
+	result, err := h.Repository.UpdateUserProfile(&user)
 	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return
@@ -352,13 +477,28 @@ func (h *Handler) addUsersToGroup(w http.ResponseWriter, r *http.Request) {
 
 	userId := r.Context().Value("userId").(uint)
 
-	result, err := h.Service.AddUsersToGroup(userId, &input)
+	users, err := h.Repository.GetGroupMembers(input.GroupId)
 	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return
 	}
+	var userIds = make([]uint, len(*users))
 
-	res := map[string]bool{"success": result}
+	for _, user := range *users {
+		userIds = append(userIds, user.UserID)
+	}
+
+	for _, v := range input.Users {
+		if !slices.Contains(userIds, v.ID) {
+			_, err = h.Repository.CreateGroupMembers(v.ID, userId, input.GroupId)
+			if err != nil {
+				helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
+				return
+			}
+		}
+	}
+
+	res := map[string]bool{"success": true}
 
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(res)
@@ -375,7 +515,7 @@ func (h *Handler) deleteMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := h.Service.DeleteMessage(input.MessageId)
+	result, err := h.Repository.DeleteMessage(input.MessageId)
 	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return
@@ -398,7 +538,7 @@ func (h *Handler) leaveGroup(w http.ResponseWriter, r *http.Request) {
 
 	userId := r.Context().Value("userId").(uint)
 
-	result, err := h.Service.LeaveGroup(userId, &input)
+	result, err := h.Repository.DeleteGroupMember(userId, input.Group)
 	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return
@@ -423,7 +563,7 @@ func (h *Handler) commentMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := h.Service.CommentMessage(&input, userId)
+	result, err := h.Repository.CommentMessage(&input, userId)
 	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return
@@ -446,7 +586,7 @@ func (h *Handler) uncommentMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := h.Service.UncommentMessage(&input, userId)
+	result, err := h.Repository.UncommentMessage(&input, userId)
 	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return
@@ -460,6 +600,46 @@ func (h *Handler) uncommentMessage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *Handler) SendMessage(userId uint, input *helpers.SendMessageRequest) (*models.Message, error) {
+	var conv *models.Conversation
+	var err error
+
+	if !input.IsGroup {
+		conv, err = h.Repository.CheckPrivateConversation(userId, input.ToUserId)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		conv, err = h.Repository.CheckGroupConversation(input.GroupId)
+		if err != nil {
+			return nil, err
+		}
+	}
+	var message models.Message
+
+	if input.PhotoPath == "" {
+		message = models.Message{
+			ConversationID:   conv.ID,
+			SenderID:         userId,
+			Content:          input.Text,
+			MessageType:      consts.MessageTypeText,
+			CreatedAt:        time.Now(),
+			RepliedMessageID: input.RepliedMessageId,
+		}
+	} else {
+		message = models.Message{
+			ConversationID:   conv.ID,
+			SenderID:         userId,
+			Content:          input.PhotoPath,
+			MessageType:      consts.MessageTypePhoto,
+			CreatedAt:        time.Now(),
+			RepliedMessageID: input.RepliedMessageId,
+		}
+	}
+
+	return h.Repository.CreateMessage(&message)
+}
+
 func (h *Handler) forwardMessage(w http.ResponseWriter, r *http.Request) {
 	userId := r.Context().Value("userId").(uint)
 
@@ -468,15 +648,37 @@ func (h *Handler) forwardMessage(w http.ResponseWriter, r *http.Request) {
 		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return
 	}
+	if input.IsPhoto {
+		for _, user := range input.Users {
+			sendMessagePayload := helpers.SendMessageRequest{
+				ToUserId:  user.ID,
+				IsGroup:   false,
+				PhotoPath: input.Text,
+			}
+			_, err := h.SendMessage(userId, &sendMessagePayload)
+			if err != nil {
+				helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
+				return
+			}
+		}
+	} else {
+		for _, user := range input.Users {
+			sendMessagePayload := helpers.SendMessageRequest{
+				ToUserId: user.ID,
+				IsGroup:  false,
+				Text:     input.Text,
+			}
 
-	result, err := h.Service.ForwardMessage(&input, userId)
-	if err != nil {
-		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
-		return
+			_, err := h.SendMessage(userId, &sendMessagePayload)
+			if err != nil {
+				helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
+				return
+			}
+		}
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(result)
+	err := json.NewEncoder(w).Encode(true)
 	if err != nil {
 		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
 		return

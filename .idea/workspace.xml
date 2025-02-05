@@ -5,19 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9942b40d-0ddb-4b55-9e3a-632eda69aa60" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.dockerignore" beforeDir="false" afterPath="$PROJECT_DIR$/.dockerignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile.frontend" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile.frontend" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/doc/api.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/doc/api.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/webui/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/.yarn/cache/@babel-parser-npm-7.26.5-2514b2b265-d92097066e.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/.yarn/cache/@babel-types-npm-7.26.5-8e8f93f536-148f6bead7.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/.yarn/cache/abbrev-npm-2.0.0-0eb38a17e5-ca0a54e35b.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/.yarn/cache/nopt-npm-8.0.0-98d6bf6d52-2d137f64b6.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/.yarn/cache/postcss-npm-8.4.49-1c13833dd1-28fe1005b1.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/webui/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/webui/yarn.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/healthcheck/healthcheck.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/healthcheck/healthcheck.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/webapi/cors.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/webapi/cors.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/webapi/load-configuration.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/webapi/load-configuration.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/webapi/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/webapi/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/webapi/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/webapi/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/database.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/routes.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/routes.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/repositories/repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/repositories/repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/service/service.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/modules.txt" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/modules.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,6 +29,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="OpenAPI" />
+        <option value="Go File" />
       </list>
     </option>
   </component>
@@ -53,12 +55,13 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
     &quot;OpenAPI/Swagger Code Generator.api.yaml.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;2&quot;,
     &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
     &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/artur/GolandProjects/wasaodin/doc&quot;,
@@ -77,6 +80,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/cmd/webapi" />
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>

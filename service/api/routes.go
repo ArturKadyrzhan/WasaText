@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 )
 
@@ -26,7 +25,7 @@ func (h *Handler) InitRoutes() http.Handler {
 	mux.Handle("/uncomment-message", logRequests(parseUserTokenMiddleware(handleRequest(http.MethodPost, h.uncommentMessage))))
 	mux.Handle("/forward-message", logRequests(parseUserTokenMiddleware(handleRequest(http.MethodPost, h.forwardMessage))))
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		enableCORS(w, r)
+
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusNoContent)
 			return
@@ -37,7 +36,6 @@ func (h *Handler) InitRoutes() http.Handler {
 }
 
 func healthcheck(w http.ResponseWriter, r *http.Request) {
-	enableCORS(w, r)
 	w.Header().Set("Content-Type", "application/json")
 	response := map[string]interface{}{
 		"success": true,
@@ -45,16 +43,6 @@ func healthcheck(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
-}
-
-func enableCORS(w http.ResponseWriter, r *http.Request) {
-	log.Printf("CORS headers set for %s", r.Method)
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Max-Age", "1")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173") // Allowing requests from port 5173
-	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
 }
 
 func handleRequest(method string, handlerFunc http.HandlerFunc) http.HandlerFunc {
