@@ -1,4 +1,4 @@
-package gorm
+package database
 
 import (
 	models2 "WasaText/service/database/models"

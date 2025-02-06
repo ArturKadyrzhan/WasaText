@@ -2,8 +2,7 @@ package main
 
 import (
 	"WasaText/service/api"
-	"WasaText/service/database/gorm"
-	"WasaText/service/repositories"
+	"WasaText/service/database"
 	"context"
 	"fmt"
 	"github.com/sirupsen/logrus"
@@ -22,13 +21,13 @@ func main() {
 func run() error {
 	logrus.SetFormatter(new(logrus.JSONFormatter))
 	_, err := LoadConfiguration()
-	db, err := gorm.NewGormSqliteDB()
+	db, err := database.NewGormSqliteDB()
 
 	if err != nil {
 		logrus.Fatalf("failed to initialize db: %s", err.Error())
 	}
 
-	repository := repositories.NewRepository(db)
+	repository := database.NewRepository(db)
 	handler := api.NewHandler(repository)
 
 	srv := new(Server)

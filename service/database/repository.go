@@ -1,7 +1,6 @@
-package repositories
+package database
 
 import (
-	"WasaText/service/database/models"
 	"WasaText/service/helpers"
 	"errors"
 	"fmt"
@@ -19,7 +18,7 @@ func NewRepository(database *gorm.DB) *Repository {
 	return &Repository{database: database}
 }
 
-func (r *Repository) CreateUser(user *models.User) (*models.User, error) {
+func (r *Repository) CreateUser(user *User) (*User, error) {
 	fmt.Println(user, "error etc")
 	result := r.database.Create(user)
 	if result.Error != nil {
@@ -29,8 +28,8 @@ func (r *Repository) CreateUser(user *models.User) (*models.User, error) {
 	return user, nil
 }
 
-func (r *Repository) GetUser(user *models.User) (*models.User, error) {
-	result := r.database.Model(&models.User{}).Where("username = ?", user.Username).Find(&user)
+func (r *Repository) GetUser(user *User) (*User, error) {
+	result := r.database.Model(&User{}).Where("username = ?", user.Username).Find(&user)
 	if result.Error != nil {
 		msg := result.Error
 		return nil, msg
@@ -39,8 +38,8 @@ func (r *Repository) GetUser(user *models.User) (*models.User, error) {
 
 }
 
-func (r *Repository) GetUsers(query string, userId uint) (*[]models.User, error) {
-	var users []models.User
+func (r *Repository) GetUsers(query string, userId uint) (*[]User, error) {
+	var users []User
 	if err := r.database.Where("LOWER(username) LIKE ? AND id != ?",
 		"%"+strings.ToLower(query)+"%", userId).Find(&users).Error; err != nil {
 		return nil, err
@@ -48,8 +47,8 @@ func (r *Repository) GetUsers(query string, userId uint) (*[]models.User, error)
 	return &users, nil
 }
 
-func (r *Repository) GetConversationsUsers(userId uint) (*[]models.User, error) {
-	var users []models.User
+func (r *Repository) GetConversationsUsers(userId uint) (*[]User, error) {
+	var users []User
 
 	if err := r.database.Raw(`
         SELECT DISTINCT u.*FROM users u  JOIN conversations c ON (u.id = c.user1_id OR u.id = c.user2_id)
@@ -61,8 +60,8 @@ func (r *Repository) GetConversationsUsers(userId uint) (*[]models.User, error) 
 	return &users, nil
 }
 
-func (r *Repository) GetGroups(userId uint) (*[]models.Group, error) {
-	var groups []models.Group
+func (r *Repository) GetGroups(userId uint) (*[]Group, error) {
+	var groups []Group
 
 	if err := r.database.Raw(`
         SELECT DISTINCT g.*
@@ -75,20 +74,20 @@ func (r *Repository) GetGroups(userId uint) (*[]models.Group, error) {
 	return &groups, nil
 }
 
-func (r *Repository) CheckPrivateConversation(user1Id uint, user2Id uint) (*models.Conversation, error) {
-	var conv models.Conversation
+func (r *Repository) CheckPrivateConversation(user1Id uint, user2Id uint) (*Conversation, error) {
+	var conv Conversation
 
-	result := r.database.Model(&models.Conversation{}).
+	result := r.database.Model(Conversation{}).
 		Where("(user1_id = ? AND user2_id = ?) OR (user1_id = ? AND user2_id = ?)", user1Id, user2Id, user2Id, user1Id).
 		Where("is_group = ?", false).
 		First(&conv)
 
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			user1 := models.User{ID: user1Id}
-			user2 := models.User{ID: user2Id}
+			user1 := User{ID: user1Id}
+			user2 := User{ID: user2Id}
 
-			conv = models.Conversation{
+			conv = Conversation{
 				User1ID: &user1.ID,
 				User2ID: &user2.ID,
 			}
@@ -101,7 +100,7 @@ func (r *Repository) CheckPrivateConversation(user1Id uint, user2Id uint) (*mode
 	return &conv, nil
 }
 
-func (r *Repository) CreateMessage(message *models.Message) (*models.Message, error) {
+func (r *Repository) CreateMessage(message *Message) (*Message, error) {
 	result := r.database.Create(&message).Find(&message)
 	if result.Error != nil {
 		return nil, result.Error
@@ -110,7 +109,7 @@ func (r *Repository) CreateMessage(message *models.Message) (*models.Message, er
 	return message, nil
 }
 
-func (r *Repository) CreateConversation(conv *models.Conversation) (*models.Conversation, error) {
+func (r *Repository) CreateConversation(conv *Conversation) (*Conversation, error) {
 	result := r.database.Create(conv)
 	if result.Error != nil {
 		msg := result.Error
@@ -120,8 +119,8 @@ func (r *Repository) CreateConversation(conv *models.Conversation) (*models.Conv
 	return conv, nil
 }
 
-func (r *Repository) GetPrivateMessages(user1ID uint, user2ID uint) (*[]models.Message, error) {
-	var conversation models.Conversation
+func (r *Repository) GetPrivateMessages(user1ID uint, user2ID uint) (*[]Message, error) {
+	var conversation Conversation
 	err := r.database.Where("(user1_id = ? AND user2_id = ?) OR (user1_id = ? AND user2_id = ?)", user1ID, user2ID, user2ID, user1ID).First(&conversation).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -131,7 +130,7 @@ func (r *Repository) GetPrivateMessages(user1ID uint, user2ID uint) (*[]models.M
 		return nil, err
 	}
 
-	var messages []models.Message
+	var messages []Message
 	err = r.database.
 		Where("conversation_id = ?", conversation.ID).
 		Order("created_at asc").
@@ -142,8 +141,8 @@ func (r *Repository) GetPrivateMessages(user1ID uint, user2ID uint) (*[]models.M
 	return &messages, nil
 }
 
-func (r *Repository) GetGroupMessages(groupID uint) (*[]models.Message, error) {
-	var conversation models.Conversation
+func (r *Repository) GetGroupMessages(groupID uint) (*[]Message, error) {
+	var conversation Conversation
 	err := r.database.Where("group_id = ?", groupID).First(&conversation).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -153,7 +152,7 @@ func (r *Repository) GetGroupMessages(groupID uint) (*[]models.Message, error) {
 		return nil, err
 	}
 
-	var messages []models.Message
+	var messages []Message
 	err = r.database.
 		Where("conversation_id = ?", conversation.ID).
 		Order("created_at asc").
@@ -164,17 +163,17 @@ func (r *Repository) GetGroupMessages(groupID uint) (*[]models.Message, error) {
 	return &messages, nil
 }
 
-func (r *Repository) CheckGroupConversation(groupId uint) (*models.Conversation, error) {
-	var conv models.Conversation
+func (r *Repository) CheckGroupConversation(groupId uint) (*Conversation, error) {
+	var conv Conversation
 
-	result := r.database.Model(&models.Conversation{}).
+	result := r.database.Model(&Conversation{}).
 		Where("group_id = ?", groupId).
 		Where("is_group = ?", true).
 		First(&conv)
 
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			conv = models.Conversation{
+			conv = Conversation{
 				GroupID: &groupId,
 				IsGroup: true,
 			}
@@ -188,7 +187,7 @@ func (r *Repository) CheckGroupConversation(groupId uint) (*models.Conversation,
 }
 
 func (r *Repository) MarkAsRead(convId, userId uint) (bool, error) {
-	err := r.database.Model(&models.Message{}).
+	err := r.database.Model(&Message{}).
 		Where("conversation_id = ? AND is_read = ? AND sender_id != ?", convId, false, userId).
 		Update("is_read", true).Error
 	if err != nil {
@@ -199,8 +198,8 @@ func (r *Repository) MarkAsRead(convId, userId uint) (bool, error) {
 	return true, nil
 }
 
-func (r *Repository) CreateGroup(payload *helpers.CreateGroupRequest, userId uint) (*models.Group, error) {
-	var group models.Group
+func (r *Repository) CreateGroup(payload *helpers.CreateGroupRequest, userId uint) (*Group, error) {
+	var group Group
 
 	group.CreatedBy = userId
 	group.Name = payload.GroupName
@@ -216,7 +215,7 @@ func (r *Repository) CreateGroup(payload *helpers.CreateGroupRequest, userId uin
 }
 
 func (r *Repository) CreateGroupMembers(userId, addedById, groupId uint) (bool, error) {
-	var groupMember models.GroupMember
+	var groupMember GroupMember
 	groupMember.GroupID = groupId
 	groupMember.UserID = userId
 	groupMember.AddedBy = addedById
@@ -231,7 +230,7 @@ func (r *Repository) CreateGroupMembers(userId, addedById, groupId uint) (bool, 
 	return true, nil
 }
 
-func (r *Repository) UpdateUserProfile(user *models.User) (bool, error) {
+func (r *Repository) UpdateUserProfile(user *User) (bool, error) {
 	result := r.database.Model(&user).Where("id = ?", user.ID).Update("profile_photo_url", user.ProfilePhotoURL)
 	if result.Error != nil {
 		msg := result.Error
@@ -241,9 +240,9 @@ func (r *Repository) UpdateUserProfile(user *models.User) (bool, error) {
 	return true, nil
 }
 
-func (r *Repository) GetGroupMembers(groupId uint) (*[]models.GroupMember, error) {
-	var groupMember []models.GroupMember
-	result := r.database.Model(&models.GroupMember{}).
+func (r *Repository) GetGroupMembers(groupId uint) (*[]GroupMember, error) {
+	var groupMember []GroupMember
+	result := r.database.Model(&GroupMember{}).
 		Where("group_id = ?", groupId).Preload("User").
 		Find(&groupMember)
 	if result.Error != nil {
@@ -255,9 +254,9 @@ func (r *Repository) GetGroupMembers(groupId uint) (*[]models.GroupMember, error
 }
 
 func (r *Repository) DeleteMessage(msgID uint) (bool, error) {
-	err := r.database.Model(&models.Message{}).
+	err := r.database.Model(&Message{}).
 		Where("id = ?", msgID).
-		Delete(&models.Message{}).Error
+		Delete(&Message{}).Error
 	if err != nil {
 		log.Println("Error updating is_read:", err)
 		return false, err
@@ -266,10 +265,10 @@ func (r *Repository) DeleteMessage(msgID uint) (bool, error) {
 	return true, nil
 }
 
-func (r *Repository) DeleteGroupMember(userId uint, group models.Group) (bool, error) {
-	result := r.database.Model(&models.GroupMember{}).
+func (r *Repository) DeleteGroupMember(userId uint, group Group) (bool, error) {
+	result := r.database.Model(&GroupMember{}).
 		Where("user_id = ? AND group_id = ?", userId, group.ID).
-		Delete(&models.GroupMember{})
+		Delete(&GroupMember{})
 
 	if result.Error != nil {
 		return false, result.Error
@@ -279,7 +278,7 @@ func (r *Repository) DeleteGroupMember(userId uint, group models.Group) (bool, e
 }
 
 func (r *Repository) CommentMessage(payload *helpers.CommentMessage, userId uint) (bool, error) {
-	var reaction models.Reaction
+	var reaction Reaction
 
 	result := r.database.Where("message_id = ? AND user_id = ?", payload.MessageId, userId).First(&reaction)
 	if result.Error != nil {
@@ -296,7 +295,7 @@ func (r *Repository) CommentMessage(payload *helpers.CommentMessage, userId uint
 
 	}
 
-	if err := r.database.Model(&models.Reaction{}).Where("message_id = ? AND user_id = ?", payload.MessageId, userId).Update("reaction", payload.Emoji).Error; err != nil {
+	if err := r.database.Model(&Reaction{}).Where("message_id = ? AND user_id = ?", payload.MessageId, userId).Update("reaction", payload.Emoji).Error; err != nil {
 		return false, err
 	}
 
@@ -304,9 +303,9 @@ func (r *Repository) CommentMessage(payload *helpers.CommentMessage, userId uint
 }
 
 func (r *Repository) UncommentMessage(payload *helpers.UncommentMessage, userId uint) (bool, error) {
-	res := r.database.Model(&models.Reaction{}).
+	res := r.database.Model(&Reaction{}).
 		Where("message_id = ? AND user_id =?", payload.MessageId, userId).
-		Delete(&models.Reaction{})
+		Delete(&Reaction{})
 	if res.Error != nil {
 		log.Println("Error updating is_read:", res.Error)
 		return false, res.Error
