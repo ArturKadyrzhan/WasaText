@@ -3,7 +3,6 @@ package api
 import (
 	"WasaText/service/consts"
 	"WasaText/service/database"
-	"WasaText/service/helpers"
 	"strconv"
 	"time"
 )
@@ -19,8 +18,8 @@ func parseOptionalInt(value string) (int, error) {
 	return strconv.Atoi(value)
 }
 
-func (h *Handler) SendMessage(userId uint, input *helpers.SendMessageRequest) (*models.Message, error) {
-	var conv *models.Conversation
+func (h *_router) SendMessage(userId uint, input *database.SendMessageRequest) (*database.Message, error) {
+	var conv *database.Conversation
 	var err error
 
 	if !input.IsGroup {
@@ -34,10 +33,10 @@ func (h *Handler) SendMessage(userId uint, input *helpers.SendMessageRequest) (*
 			return nil, err
 		}
 	}
-	var message models.Message
+	var message database.Message
 
 	if input.PhotoPath == "" {
-		message = models.Message{
+		message = database.Message{
 			ConversationID:   conv.ID,
 			SenderID:         userId,
 			Content:          input.Text,
@@ -46,7 +45,7 @@ func (h *Handler) SendMessage(userId uint, input *helpers.SendMessageRequest) (*
 			RepliedMessageID: input.RepliedMessageId,
 		}
 	} else {
-		message = models.Message{
+		message = database.Message{
 			ConversationID:   conv.ID,
 			SenderID:         userId,
 			Content:          input.PhotoPath,

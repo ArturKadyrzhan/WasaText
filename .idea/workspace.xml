@@ -5,37 +5,63 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9942b40d-0ddb-4b55-9e3a-632eda69aa60" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/service/api/add-to-group.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/service/api/comment-message.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/service/api/create-group.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/service/api/delete-message.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/service/api/do-login.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/service/api/forward-message.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/service/api/get-messages.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/service/api/get-my-conversations.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/service/api/get-users.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/service/api/leave-group.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/service/api/mark-as-read.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/service/api/reqcontext/request-context.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/service/api/send-message.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/service/api/send-photo.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/service/api/set-my-photo.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/service/api/uncomment-message.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/service/database/schemas-db.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cmd/webapi/register-web-ui-stub.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cmd/webapi/register-web-ui.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/api/api-context-wrapper.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/api/api-handler.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/api/api.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/api/liveness.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/api/shutdown.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/database/check-group-conversation.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/database/check-private-conversation.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/database/comment-message.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/database/create-group-members.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/database/create-group.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/database/create-message.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/database/create-user.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/database/delete-group-member.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/database/delete-message.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/database/get-conversations-users.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/database/get-group-members.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/database/get-group-messages.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/database/get-groups.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/database/get-private-messages.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/database/get-user.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/database/get-users.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/database/mark-as-read.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/database/uncomment-message.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/database/update-user-profile.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/globaltime/globaltime.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/webapi/load-configuration.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/webapi/load-configuration.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/webapi/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/webapi/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/add-to-group.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/add-to-group.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/comment-message.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/comment-message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/create-group.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/create-group.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/delete-message.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/delete-message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/do-login.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/do-login.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/forward-message.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/forward-message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/get-messages.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/get-messages.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/get-my-conversations.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/get-my-conversations.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/get-users.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/get-users.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/api/handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/handler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/api/routes.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/routes.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/database/gorm/gormSQL.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/database.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/database/models/conversation.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/database/models/group.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/database/models/groupmember.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/database/models/message.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/database/models/reaction.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/database/models/user.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/repositories/repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/leave-group.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/leave-group.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/mark-as-read.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/mark-as-read.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/reqcontext/request-context.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/reqcontext/request-context.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/routes.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/send-message.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/send-message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/send-photo.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/send-photo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/set-my-photo.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/set-my-photo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/uncomment-message.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/uncomment-message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/user_middleware.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/user_middleware.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/schemas-db.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/schemas-db.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/helpers/errors.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/errors.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/helpers/helpers.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/helpers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/helpers/requests.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/helpers/responses.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/responses.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/modules.txt" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/modules.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -98,8 +124,8 @@
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/service/database" />
       <recent name="$PROJECT_DIR$/service/api" />
+      <recent name="$PROJECT_DIR$/service/database" />
       <recent name="$PROJECT_DIR$/cmd/webapi" />
       <recent name="$PROJECT_DIR$" />
     </key>

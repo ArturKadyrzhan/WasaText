@@ -1,7 +1,7 @@
-package helpers
+package api
 
 import (
-	"WasaText/service/database/models"
+	"WasaText/service/database"
 	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
@@ -18,7 +18,7 @@ type tokenClaims struct {
 	UserId uint `json:"id"`
 }
 
-func GenerateSessionToken(user *models.User) (string, error) {
+func GenerateSessionToken(user *database.User) (string, error) {
 	ttl, err := strconv.Atoi(os.Getenv("TTL_HOUR"))
 	if err != nil {
 		return "", err

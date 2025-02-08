@@ -1,15 +1,16 @@
 package api
 
 import (
-	"WasaText/service/helpers"
+	"WasaText/service/database"
 	"encoding/json"
+	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
 
-func (h *Handler) leaveGroup(w http.ResponseWriter, r *http.Request) {
-	var input helpers.GroupRequest
+func (h *_router) leaveGroup(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	var input database.GroupRequest
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
+		HandleError(w, NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return
 	}
 
@@ -17,7 +18,7 @@ func (h *Handler) leaveGroup(w http.ResponseWriter, r *http.Request) {
 
 	result, err := h.Repository.DeleteGroupMember(userId, input.Group)
 	if err != nil {
-		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
+		HandleError(w, NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return
 	}
 
@@ -26,7 +27,7 @@ func (h *Handler) leaveGroup(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(res)
 	if err != nil {
-		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
+		HandleError(w, NewAPIError(err.Error(), http.StatusBadRequest))
 		return
 	}
 }

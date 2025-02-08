@@ -2,42 +2,42 @@ package api
 
 import (
 	"WasaText/service/consts"
-	"WasaText/service/database/models"
-	"WasaText/service/helpers"
+	"WasaText/service/database"
 	"encoding/json"
+	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
 
-func (h *Handler) getMessages(w http.ResponseWriter, r *http.Request) {
-	var convUserId helpers.GetMessagesRequest
+func (h *_router) getMessages(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	var convUserId database.GetMessagesRequest
 	if err := json.NewDecoder(r.Body).Decode(&convUserId); err != nil {
-		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
+		HandleError(w, NewAPIError(err.Error(), http.StatusBadRequest))
 		return
 	}
 
 	userId := r.Context().Value("userId").(uint)
 
-	var messages *[]models.Message
+	var messages *[]database.Message
 	var err error
 
 	if !convUserId.IsGroup {
 		messages, err = h.Repository.GetPrivateMessages(userId, convUserId.UserOrGroupId)
 		if err != nil {
-			helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
+			HandleError(w, NewAPIError(err.Error(), http.StatusBadRequest))
 			return
 		}
 	} else {
 		messages, err = h.Repository.GetGroupMessages(convUserId.UserOrGroupId)
 		if err != nil {
-			helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
+			HandleError(w, NewAPIError(err.Error(), http.StatusBadRequest))
 			return
 		}
 	}
 
-	var response []helpers.MessagesResponse
+	var response []MessagesResponse
 
 	if messages != nil {
-		messageMap := make(map[uint]models.Message)
+		messageMap := make(map[uint]database.Message)
 		for _, message := range *messages {
 			messageMap[message.ID] = message
 		}
@@ -45,7 +45,7 @@ func (h *Handler) getMessages(w http.ResponseWriter, r *http.Request) {
 		for _, message := range *messages {
 
 			var emoji string
-			repliedMessage := helpers.RepliedMessageResponse{}
+			repliedMessage := RepliedMessageResponse{}
 
 			if message.Reactions.ID != 0 {
 				emoji = message.Reactions.Reaction
@@ -54,7 +54,7 @@ func (h *Handler) getMessages(w http.ResponseWriter, r *http.Request) {
 			if message.RepliedMessageID != nil {
 				repliedMsg, found := messageMap[*message.RepliedMessageID]
 				if found {
-					repliedMessage = helpers.RepliedMessageResponse{
+					repliedMessage = RepliedMessageResponse{
 						MessageId: repliedMsg.ID,
 						Content:   repliedMsg.Content,
 					}
@@ -62,7 +62,7 @@ func (h *Handler) getMessages(w http.ResponseWriter, r *http.Request) {
 			}
 
 			if message.MessageType == consts.MessageTypeText {
-				response = append(response, helpers.MessagesResponse{
+				response = append(response, MessagesResponse{
 					MessageId:      message.ID,
 					Message:        message.Content,         // Message text
 					UserId:         message.SenderID,        // Sender user ID
@@ -75,7 +75,7 @@ func (h *Handler) getMessages(w http.ResponseWriter, r *http.Request) {
 					RepliedMessage: repliedMessage,
 				})
 			} else {
-				response = append(response, helpers.MessagesResponse{
+				response = append(response, MessagesResponse{
 					MessageId:      message.ID,
 					Message:        message.Content,         // Message text
 					UserId:         message.SenderID,        // Sender user ID
@@ -91,12 +91,12 @@ func (h *Handler) getMessages(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	res := map[string][]helpers.MessagesResponse{"messages": response}
+	res := map[string][]MessagesResponse{"messages": response}
 
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(res)
 	if err != nil {
-		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
+		HandleError(w, NewAPIError(err.Error(), http.StatusBadRequest))
 		return
 	}
 }

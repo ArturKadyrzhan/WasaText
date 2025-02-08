@@ -1,7 +1,7 @@
-package helpers
+package api
 
 import (
-	"WasaText/service/database/models"
+	"WasaText/service/database"
 	"time"
 )
 
@@ -18,7 +18,7 @@ type MessagesResponse struct {
 	CreatedAt      time.Time              `json:"createdAt"`
 }
 
-func SendMessageResponseHandler(input *SendMessageRequest, userId uint, result *models.Message, resultRead bool) (map[string]interface{}, error) {
+func SendMessageResponseHandler(input *database.SendMessageRequest, userId uint, result *database.Message, resultRead bool) (map[string]interface{}, error) {
 	var fromUsername string
 	message := map[string]interface{}{}
 

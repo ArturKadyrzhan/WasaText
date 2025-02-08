@@ -1,16 +1,17 @@
 package api
 
 import (
-	"WasaText/service/helpers"
+	"WasaText/service/database"
 	"encoding/json"
+	"github.com/julienschmidt/httprouter"
 	"net/http"
 	"slices"
 )
 
-func (h *Handler) addToGroup(w http.ResponseWriter, r *http.Request) {
-	var input helpers.AddUsersToGroup
+func (h *_router) addToGroup(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	var input database.AddUsersToGroup
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
+		HandleError(w, NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return
 	}
 
@@ -18,7 +19,7 @@ func (h *Handler) addToGroup(w http.ResponseWriter, r *http.Request) {
 
 	users, err := h.Repository.GetGroupMembers(input.GroupId)
 	if err != nil {
-		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
+		HandleError(w, NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return
 	}
 	var userIds = make([]uint, len(*users))
@@ -31,7 +32,7 @@ func (h *Handler) addToGroup(w http.ResponseWriter, r *http.Request) {
 		if !slices.Contains(userIds, v.ID) {
 			_, err = h.Repository.CreateGroupMembers(v.ID, userId, input.GroupId)
 			if err != nil {
-				helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
+				HandleError(w, NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 				return
 			}
 		}
@@ -42,7 +43,7 @@ func (h *Handler) addToGroup(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(res)
 	if err != nil {
-		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
+		HandleError(w, NewAPIError(err.Error(), http.StatusBadRequest))
 		return
 	}
 }

@@ -1,34 +1,34 @@
 package api
 
 import (
-	"WasaText/service/database/models"
-	"WasaText/service/helpers"
+	"WasaText/service/database"
 	"encoding/json"
+	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
 
-func (h *Handler) setMyPhoto(w http.ResponseWriter, r *http.Request) {
+func (h *_router) setMyPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	userId := r.Context().Value("userId").(uint)
 
 	file, header, err := r.FormFile("profile_picture")
 	if err != nil {
-		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
+		HandleError(w, NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return
 	}
 	defer file.Close()
 
-	filepath, err := helpers.SaveUploadedFile(file, header, "webui/public/images/profile", userId)
+	filepath, err := SaveUploadedFile(file, header, "webui/public/images/profile", userId)
 	if err != nil {
-		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
+		HandleError(w, NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return
 	}
 
-	var user models.User
+	var user database.User
 	user.ID = userId
 	user.ProfilePhotoURL = filepath
 	result, err := h.Repository.UpdateUserProfile(&user)
 	if err != nil {
-		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusUnprocessableEntity))
+		HandleError(w, NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return
 	}
 
@@ -37,7 +37,7 @@ func (h *Handler) setMyPhoto(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(res)
 	if err != nil {
-		helpers.HandleError(w, helpers.NewAPIError(err.Error(), http.StatusBadRequest))
+		HandleError(w, NewAPIError(err.Error(), http.StatusBadRequest))
 		return
 	}
 }
