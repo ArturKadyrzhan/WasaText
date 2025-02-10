@@ -24,7 +24,7 @@ export default {
       }
 
       try {
-        let response = await this.$axios.get(`/get-users?search=${this.searchQuery}`, {
+        let response = await this.$axios.get(`/users?search=${this.searchQuery}`, {
         headers: {
           'Authorization': `Bearer ${getToken()}`
         }
@@ -65,7 +65,7 @@ export default {
     }
 
     try {
-      const response = await this.$axios.post("/create-group", formData, {
+      const response = await this.$axios.post("/group", formData, {
         headers: {
           Authorization:` Bearer ${getToken()}`,
           "Content-Type": "multipart/form-data",

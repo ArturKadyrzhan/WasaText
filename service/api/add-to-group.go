@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
-	"slices"
 )
 
 func (h *_router) addToGroup(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -29,7 +28,7 @@ func (h *_router) addToGroup(w http.ResponseWriter, r *http.Request, ps httprout
 	}
 
 	for _, v := range input.Users {
-		if !slices.Contains(userIds, v.ID) {
+		if !Contains(userIds, v.ID) {
 			_, err = h.Repository.CreateGroupMembers(v.ID, userId, input.GroupId)
 			if err != nil {
 				HandleError(w, NewAPIError(err.Error(), http.StatusUnprocessableEntity))
@@ -46,4 +45,13 @@ func (h *_router) addToGroup(w http.ResponseWriter, r *http.Request, ps httprout
 		HandleError(w, NewAPIError(err.Error(), http.StatusBadRequest))
 		return
 	}
+}
+
+func Contains(s []uint, e uint) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
 }

@@ -1,7 +1,6 @@
 package database
 
 import (
-	models2 "WasaText/service/database/models"
 	"fmt"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -16,7 +15,7 @@ func NewGormSqliteDB() (*gorm.DB, error) {
 		return nil, err
 	}
 
-	err = Database.AutoMigrate(&models2.User{}, &models2.Conversation{}, &models2.Message{}, &models2.GroupMember{}, &models2.Group{}, models2.Reaction{})
+	err = Database.AutoMigrate(&User{}, &Conversation{}, &Message{}, &GroupMember{}, &Group{}, &Reaction{})
 	if err != nil {
 		return nil, err
 	}

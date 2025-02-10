@@ -166,7 +166,7 @@
        }
 
        try {
-         let response = await this.$axios.get(`/get-users?search=${this.searchQuery}`, {
+         let response = await this.$axios.get(`/users?search=${this.searchQuery}`, {
            headers: {
              'Authorization': `Bearer ${getToken()}`
            }
@@ -198,7 +198,7 @@
      async fetchConversations() {
        try {
           console.log('Token:',getToken())
-         let response = await this.$axios.post('/get-conversations',null,{
+         let response = await this.$axios.get('/conversations',{
            headers: {
              'Authorization':`Bearer ${getToken()}`,
            },
@@ -258,7 +258,7 @@
        formData.append("profile_picture", this.selectedFile);
 
        try {
-         const response = await this.$axios.post("/upload-profile-picture", formData, {
+         const response = await this.$axios.post("/profile/photo", formData, {
            headers: {
              "Content-Type": "multipart/form-data",
              Authorization: `Bearer ${getToken()}`,
@@ -274,7 +274,7 @@
      },
      async leaveGroup(group) {
        try {
-         await this.$axios.post("/leave-group",{
+         await this.$axios.post("/group/leave",{
             group:group
          }, {
            headers: {

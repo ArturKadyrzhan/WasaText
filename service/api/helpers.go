@@ -9,7 +9,6 @@ import (
 	"mime/multipart"
 	"os"
 	"path/filepath"
-	"strconv"
 	"time"
 )
 
@@ -19,11 +18,7 @@ type tokenClaims struct {
 }
 
 func GenerateSessionToken(user *database.User) (string, error) {
-	ttl, err := strconv.Atoi(os.Getenv("TTL_HOUR"))
-	if err != nil {
-		return "", err
-	}
-
+	ttl := 12
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Duration(ttl) * time.Hour).Unix(),
@@ -32,7 +27,7 @@ func GenerateSessionToken(user *database.User) (string, error) {
 		user.ID,
 	})
 
-	return token.SignedString([]byte(os.Getenv("API_SECRET")))
+	return token.SignedString([]byte("askjsadkjadsjnsadkmlasd123123123"))
 }
 
 func ParseUserToken(accessToken string) (uint, error) {
@@ -40,7 +35,7 @@ func ParseUserToken(accessToken string) (uint, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
 		}
-		return []byte(os.Getenv("API_SECRET")), nil
+		return []byte("askjsadkjadsjnsadkmlasd123123123"), nil
 	})
 	if err != nil {
 		return 0, err
@@ -70,7 +65,7 @@ func SaveUploadedFile(file multipart.File, header *multipart.FileHeader, uploadD
 	if err != nil {
 		return "", err
 	}
-	defer out.Close()
+	//defer out.Close()
 
 	// Copy the uploaded file's content to  destination file
 	_, err = io.Copy(out, file)

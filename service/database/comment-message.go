@@ -1,12 +1,11 @@
 package database
 
 import (
-	"WasaText/service/api"
 	"errors"
 	"gorm.io/gorm"
 )
 
-func (r *Repository) CommentMessage(payload *api.CommentMessage, userId uint) (bool, error) {
+func (r *Repository) CommentMessage(payload *CommentMessage, userId uint) (bool, error) {
 	var reaction Reaction
 
 	result := r.database.Where("message_id = ? AND user_id = ?", payload.MessageId, userId).First(&reaction)

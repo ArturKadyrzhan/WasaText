@@ -1,11 +1,10 @@
 package database
 
 import (
-	"WasaText/service/api"
 	"log"
 )
 
-func (r *Repository) UncommentMessage(payload *api.UncommentMessage, userId uint) (bool, error) {
+func (r *Repository) UncommentMessage(payload *UncommentMessage, userId uint) (bool, error) {
 	res := r.database.Model(&Reaction{}).
 		Where("message_id = ? AND user_id =?", payload.MessageId, userId).
 		Delete(&Reaction{})

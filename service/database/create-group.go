@@ -1,10 +1,6 @@
 package database
 
-import (
-	"WasaText/service/api"
-)
-
-func (r *Repository) CreateGroup(payload *api.CreateGroupRequest, userId uint) (*Group, error) {
+func (r *Repository) CreateGroup(payload *CreateGroupRequest, userId uint) (*Group, error) {
 	var group Group
 
 	group.CreatedBy = userId

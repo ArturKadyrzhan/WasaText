@@ -12,7 +12,6 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
-	"os/signal"
 	"syscall"
 )
 
@@ -21,13 +20,6 @@ func main() {
 		_, _ = fmt.Fprintln(os.Stderr, "error: ", err)
 		os.Exit(1)
 	}
-	//_, err := LoadConfiguration()
-	//db, err := database.NewGormSqliteDB()
-	//
-	//if err != nil {
-	//	logrus.Fatalf("failed to initialize db: %s", err.Error())
-	//}
-
 }
 
 func run() error {
@@ -67,7 +59,7 @@ func run() error {
 	// Make a channel to listen for an interrupt or terminate signal from the OS.
 	// Use a buffered channel because the signal package requires it.
 	shutdown := make(chan os.Signal, 1)
-	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
+	//signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
 
 	// Make a channel to listen for errors coming from the listener. Use a
 	// buffered channel so the goroutine can exit if we don't collect this error.

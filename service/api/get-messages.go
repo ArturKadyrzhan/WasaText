@@ -4,6 +4,7 @@ import (
 	"WasaText/service/consts"
 	"WasaText/service/database"
 	"encoding/json"
+	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
@@ -12,6 +13,7 @@ func (h *_router) getMessages(w http.ResponseWriter, r *http.Request, ps httprou
 	var convUserId database.GetMessagesRequest
 	if err := json.NewDecoder(r.Body).Decode(&convUserId); err != nil {
 		HandleError(w, NewAPIError(err.Error(), http.StatusBadRequest))
+		fmt.Println("get message errortttt", err.Error())
 		return
 	}
 

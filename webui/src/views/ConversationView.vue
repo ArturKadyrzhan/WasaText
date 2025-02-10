@@ -52,15 +52,23 @@ export default {
     },
     async getMessages(id) {
       const isGroup = this.groupInfo.ID === id;
+      console.log(id)
+      console.log(this.groupInfo.ID)
+      console.log(isGroup)
+
       try {
-        let response = await this.$axios.post('/get-messages', {
-          id: id,
-          isGroup: isGroup
-        }, {
-          headers: {
-            'Authorization': `Bearer ${getToken()}`
-          }
-        });
+        let response = await this.$axios.post('/messages',
+            {
+              id: id,
+              isGroup: isGroup
+            },
+            {
+              headers: {
+                'Authorization': `Bearer ${getToken()}`,
+                'Content-Type': 'application/json'
+              }
+            }
+        );
         this.messages = response.data['messages'].map(message => ({
           id: message.message_id,
           message: message.message,
@@ -96,7 +104,7 @@ export default {
         let isReceived = false;
         const repliedMessageId = this.selectedReplyMessage?.id || 0;
         try {
-          const response = await this.$axios.post('/send-message', {
+          const response = await this.$axios.post('/message/send', {
             text: this.newMessage,
             toUserId: this.userInfo.ID,
             isGroup:isGroup,
@@ -164,7 +172,7 @@ export default {
       }
 
       try {
-        let response = await this.$axios.get(`/get-users?search=${this.searchQuery}`, {
+        let response = await this.$axios.get(`/users?search=${this.searchQuery}`, {
         headers: {
           'Authorization': `Bearer ${getToken()}`
         }
@@ -178,7 +186,7 @@ export default {
   async addNewUsers() {
     try {
       const response = await this.$axios.post(
-          "/update-group",
+          "/group/users",
           {
             groupId: this.groupInfo.ID,
             users: this.selectedUsers
@@ -215,7 +223,7 @@ export default {
     formData.append('toUserId', this.userInfo.ID);
 
     try {
-      const response = await this.$axios.post("/send-photo", formData, {
+      const response = await this.$axios.post("/message/send-photo", formData, {
         headers: {
            Authorization: `Bearer ${getToken()}`,
           "Content-Type": "multipart/form-data",
@@ -231,7 +239,7 @@ export default {
     const isGroup = !!this.groupInfo.ID;
     try {
       const response = this.$axios.post(
-          "/mark-as-read",
+          "/message/read",
           {
             groupId: this.groupInfo.ID,
             toUserId: this.userInfo.ID,
@@ -263,7 +271,7 @@ export default {
   async deleteMessage(message) {
     try {
       const response = await this.$axios.post(
-          "/delete-message",
+          "/message",
           {
             id: message.id,
           },
@@ -290,7 +298,7 @@ export default {
     async uncommentMessage(message) {
       try {
         const response = await this.$axios.post(
-            "/uncomment-message",
+            "/message/uncomment",
             {
               id: message.id,
             },
@@ -314,7 +322,7 @@ export default {
     async forwardMessage() {
       try {
         const response = await this.$axios.post(
-            "/forward-message",
+            "/message/forward",
             {
               id: this.selectedForwardedMessage.id,
               text: this.selectedForwardedMessage.message,
@@ -360,7 +368,7 @@ export default {
 
       try {
         const response = this.$axios.post(
-            "/comment-message",
+            "/message/comment",
             {
               messageId: messageId,
               emoji: emoji,

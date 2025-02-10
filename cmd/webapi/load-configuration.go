@@ -4,11 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/ardanlabs/conf"
-	"github.com/joho/godotenv"
 	"gopkg.in/yaml.v2"
 	"io"
 	"os"
-	"strconv"
 	"time"
 )
 
@@ -59,15 +57,19 @@ func LoadConfiguration() (WebAPIConfiguration, error) {
 		}
 		_ = fp.Close()
 	}
-	err = godotenv.Load()
-	if err != nil {
-		return WebAPIConfiguration{}, err
-	}
+	//err = godotenv.Load()
+	//if err != nil {
+	//	return WebAPIConfiguration{}, err
+	//}
 
-	ttlHour, _ := strconv.Atoi(os.Getenv("TTL_HOUR"))
-	cfg.ServerPort = os.Getenv("SERVER_PORT")
-	cfg.ApiSecret = os.Getenv("API_SECRET")
-	cfg.TtlHour = ttlHour
+	//ttlHour, _ := strconv.Atoi(os.Getenv("TTL_HOUR"))
+	//cfg.ServerPort = os.Getenv("SERVER_PORT")
+	//cfg.ApiSecret = os.Getenv("API_SECRET")
+	//cfg.TtlHour = ttlHour
+
+	cfg.ServerPort = "3000"
+	cfg.ApiSecret = "askjsadkjadsjnsadkmlasd123123123"
+	cfg.TtlHour = 12
 
 	return cfg, nil
 }
