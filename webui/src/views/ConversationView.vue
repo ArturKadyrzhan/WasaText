@@ -665,7 +665,7 @@ watch: {
   flex-direction: row;
   align-items: center;
   z-index: 1;
-  background-color: #0088cc;
+  background-color: #000000;
   color: #fff;
   font-size: 25px;
 }

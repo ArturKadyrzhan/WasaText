@@ -1,45 +1,10 @@
-# Build stage
-FROM golang:1.21-alpine as builder
-
+FROM golang:1.18-alpine
 WORKDIR /app
-
-# Install build dependencies
 RUN apk add --no-cache gcc musl-dev
-
-# Copy go mod and sum files first
 COPY go.mod go.sum ./
-
-# Try to download dependencies
 RUN go mod download
-
-# Copy the entire project
 COPY . .
-
-
-
-# Build the application
-RUN CGO_ENABLED=1 GOOS=linux go build -o main ./cmd/main.go
-
-# Production stage
-FROM alpine:3.18
-
-WORKDIR /app
-
-# Install runtime dependencies
-RUN apk add --no-cache sqlite
-
-
-# Copy the built binary and other required files
-COPY --from=builder /app/main .
-COPY database.db /app/data/database.db
-COPY .env /app/.env
-
-
-# Ensure the database directory exists
-RUN mkdir -p /app/data
-
-
+RUN go build -o main cmd/webapi/*.go
 EXPOSE 3000
-
 CMD ["./main"]
 

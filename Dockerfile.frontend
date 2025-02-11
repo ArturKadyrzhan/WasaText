@@ -1,49 +1,24 @@
-#FROM node:20-alpine as builder
-#
-#WORKDIR /app
-#
-#RUN corepack enable
-#
-#RUN corepack prepare yarn@4.5.0 --activate
-#
-## Copy package files
-#COPY webui/package.json webui/yarn.lock ./
-#
-#
-## Install dependencies
-#RUN yarn install
-#
-## Copy source files
-#COPY webui/ .
-#
-#
-#EXPOSE 5173
-#
-#
-## Run in development mode
-#CMD ["yarn", "dev", "--host"]
+# Use Node.js Alpine for lightweight image
+FROM node:20-alpine
 
-
-
-# Используем Node.js для сборки
-FROM node:20-alpine as builder
+# Enable Corepack (for Yarn)
+RUN corepack enable
 
 WORKDIR /app
-RUN corepack enable
-RUN corepack prepare yarn@4.5.0 --activate
 
-# Установка зависимостей и сборка
+# Copy package files first (for caching layers)
 COPY webui/package.json webui/yarn.lock ./
-RUN yarn install
+
+# Install dependencies
+COPY webui/node_modules ./node_modules
+
+# Copy the source files
 COPY webui/ .
-RUN yarn build
 
-# Используем Nginx для раздачи собранных файлов
-FROM nginx:alpine
-COPY --from=builder /app/dist /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 5173
 
+# Run Vite in development mode (Hot Reload)
+CMD ["yarn", "dev", "--host"]
 
 
 

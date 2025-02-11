@@ -5,10 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9942b40d-0ddb-4b55-9e3a-632eda69aa60" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/webapi/cors.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/webapi/cors.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/doc/api.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/doc/api.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile.backend" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile.backend" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile.frontend" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile.frontend" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/github.com/joho/godotenv/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/github.com/joho/godotenv/LICENCE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/github.com/joho/godotenv/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/github.com/joho/godotenv/godotenv.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/github.com/joho/godotenv/parser.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/modules.txt" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/modules.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webui/src/views/ConversationView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/webui/src/views/ConversationView.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
