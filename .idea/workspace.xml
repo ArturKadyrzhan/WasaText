@@ -5,24 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9942b40d-0ddb-4b55-9e3a-632eda69aa60" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/webapi/cors.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/webapi/cors.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/webapi/load-configuration.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/webapi/load-configuration.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/webapi/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/webapi/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/webapi/register-web-ui.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/webapi/server.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/database.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/api/add-to-group.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/add-to-group.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/api/api-handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/api-handler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/api/do-login.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/do-login.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/api/helpers.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/helpers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/database/comment-message.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/comment-message.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/database/create-group.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/create-group.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/database/database.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/database.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/database/uncomment-message.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/uncomment-message.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/webui/src/App.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/src/views/ConversationView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/webui/src/views/ConversationView.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/src/views/CreateGroupView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/webui/src/views/CreateGroupView.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/api.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/doc/api.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +59,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_interpreter_path&quot;: &quot;/Users/artur/Library/Application Support/JetBrains/GoLand2024.2/node/versions/22.13.0/bin/node&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propDebugger&quot;,
     &quot;ts.external.directory.path&quot;: &quot;/Applications/GoLand.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
