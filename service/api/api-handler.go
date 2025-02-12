@@ -8,7 +8,7 @@ import (
 func (rt *_router) Handler() http.Handler {
 
 	rt.router.GET("/liveness", rt.healthcheck)
-	rt.router.POST("/login", rt.doLogin)
+	rt.router.POST("/session", rt.doLogin)
 	rt.router.GET("/users", rt.parseUserTokenMiddleware(rt.getUsers))
 	rt.router.GET("/conversations", rt.parseUserTokenMiddleware(rt.getMyConversations))
 	rt.router.POST("/profile/photo", rt.parseUserTokenMiddleware(rt.setMyPhoto))

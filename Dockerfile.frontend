@@ -1,27 +1,7 @@
-# Use Node.js Alpine for lightweight image
-FROM node:20-alpine
-
-# Enable Corepack (for Yarn)
-RUN corepack enable
-
-WORKDIR /webui
-
-# Copy package files first (for caching layers)
-COPY webui/package.json webui/yarn.lock ./
-
-# Install dependencies
-#COPY webui/node_modules ./node_modules
-RUN yarn install
-
-# Copy the source files
-COPY webui/ .
-
-EXPOSE 5173
-
-# Run Vite in development mode (Hot Reload)
-CMD ["yarn", "dev", "--host"]
-
-
-
-
-
+FROM node:lts AS builder
+WORKDIR /app
+COPY webui webui
+WORKDIR /app/webui
+RUN yarn run build-prod
+FROM nginx:stable
+COPY --from=builder /app/webui/dist /usr/share/nginx/html

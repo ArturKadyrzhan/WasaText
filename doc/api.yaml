@@ -3,7 +3,7 @@ servers:
   - url: "http://localhost:3000"
 info:
   title: WASAPhoto
-  description: |
+  description: "WASAPhoto API documentation"
   version: 1.0.0
 
 components:
@@ -13,1020 +13,1378 @@ components:
       scheme: bearer
       bearerFormat: JWT
 
-
 tags:
   - name: Users
-    description: Operations related to users.
+    description: "Operations related to users."
   - name: Messages
-    description: Operations related to messages.
+    description: "Operations related to messages."
   - name: Groups
-    description: Operations related to groups.
+    description: "Operations related to groups."
   - name: Authentication
-    description: Authentication operations.
-  - name: Health
-    description: System health endpoints.
+    description: "Authentication operations."
 
 paths:
-  /liveness:
-    get:
-      tags:
-        - Healthcheck
-      summary: Checks the liveness of the service
-      description: Returns the status of the service to indicate if it is running.
-      operationId: healthcheck
-      responses:
-        '200':
-          description: Service is alive
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status:
-                    type: integer
-                    example: 200
-  /login:
+  /session:
     post:
       tags:
         - Authentication
-      summary: Logs in the user
-      description: |-
-        Authenticates the user and returns an access token. If the user does not exist, it will be created.
+      summary: "Logs in the user"
+      description: "Authenticates the user and returns an access token. If the user does not exist, it will be created."
       operationId: doLogin
       requestBody:
-        description: User credentials
+        description: "User credentials object"
         required: true
         content:
           application/json:
             schema:
               type: object
+              description: "User credentials for login"
               properties:
                 username:
                   type: string
+                  description: "The user's username"
                   example: "Maria"
                   minLength: 3
                   maxLength: 32
+                  pattern: "^[a-zA-Z0-9_]+$"
+              required:
+                - username
       responses:
         '200':
-          description: Successful login
+          description: "Successful login"
           content:
             application/json:
               schema:
                 type: object
+                description: "Response containing the access token and user details"
                 properties:
                   token:
                     type: string
+                    description: "JWT access token"
                     example: "eyJhbGciOiJIUzI1NiIsInR..."
+                    minLength: 1
+                    maxLength: 512
+                    pattern: "^[A-Za-z0-9\\-_.]+$"
                   id:
                     type: integer
+                    format: int64
+                    description: "User ID"
                     example: 123
                   username:
                     type: string
+                    description: "The user's username"
                     example: "Maria"
+                    minLength: 3
+                    maxLength: 32
+                    pattern: "^[a-zA-Z0-9_]+$"
+                required:
+                  - token
+                  - id
+                  - username
         '400':
-          description: Bad request (invalid input)
+          description: "Bad request (invalid input)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Invalid request body"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
+
   /users:
     get:
       tags:
         - Users
-      summary: Retrieves a list of users
-      description: Fetches users based on a search query.
+      summary: "Retrieves a list of users"
+      description: "Fetches users based on a search query."
       operationId: getUsers
       security:
-        - BearerAuth: [ ]
+        - BearerAuth: []
       parameters:
         - name: search
           in: query
-          description: Search query to filter users
+          description: "Search query to filter users"
           required: true
           schema:
             type: string
             example: "Maria"
+            minLength: 1
+            maxLength: 100
+            pattern: ".*"
       responses:
         '200':
-          description: List of matching users
+          description: "List of matching users"
           content:
             application/json:
               schema:
                 type: object
+                description: "Response containing a list of users"
                 properties:
                   users:
                     type: array
+                    description: "List of user objects"
+                    minItems: 0
+                    maxItems: 1000
                     items:
                       type: object
+                      description: "A user object"
                       properties:
                         id:
                           type: integer
+                          format: int64
+                          description: "User ID"
                           example: 123
                         username:
                           type: string
+                          description: "Username"
                           example: "Maria"
-                        profilePhotoURL:
+                          minLength: 3
+                          maxLength: 32
+                          pattern: "^[a-zA-Z0-9_]+$"
+                        profilePhotoUrl:
                           type: string
+                          description: "URL of the user's profile photo"
                           example: "https://example.com/profile.jpg"
-                        created_at:
+                          minLength: 5
+                          maxLength: 256
+                          pattern: "^(https?://.+)$"
+                        createdAt:
                           type: string
                           format: date-time
+                          description: "Timestamp when the user was created"
                           example: "2025-02-11T12:34:56Z"
-                        updated_at:
+                          minLength: 20
+                          maxLength: 30
+                          pattern: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+                        updatedAt:
                           type: string
                           format: date-time
-                          nullable: true
+                          description: "Timestamp when the user was last updated"
                           example: "2025-02-11T14:56:22Z"
+                          minLength: 20
+                          maxLength: 30
+                          pattern: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+                      required:
+                        - id
+                        - username
+                        - profilePhotoUrl
+                        - createdAt
+                        - updatedAt
+                required:
+                  - users
         '400':
-          description: Bad request (missing search query)
+          description: "Bad request (missing search query)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Query is empty"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
+
   /conversations:
     get:
       tags:
         - Messages
-      summary: Retrieves the user's conversations
-      description: Fetches the user's private and group conversations.
+      summary: "Retrieves the user's conversations"
+      description: "Fetches the user's private and group conversations."
       operationId: getMyConversations
       security:
-        - BearerAuth: []  # Assumes authentication is required
+        - BearerAuth: []
       responses:
         '200':
-          description: Successfully retrieved user conversations
+          description: "Successfully retrieved user conversations"
           content:
             application/json:
               schema:
                 type: object
+                description: "Response containing conversation details"
                 properties:
                   result:
                     type: object
+                    description: "Conversations result"
                     properties:
                       users:
                         type: array
+                        description: "List of user objects in the conversation"
+                        minItems: 0
+                        maxItems: 1000
                         items:
                           type: object
+                          description: "A user object"
                           properties:
                             id:
                               type: integer
+                              format: int64
+                              description: "User ID"
                               example: 123
                             username:
                               type: string
+                              description: "Username"
                               example: "Maria"
-                            profilePhotoURL:
+                              minLength: 3
+                              maxLength: 32
+                              pattern: "^[a-zA-Z0-9_]+$"
+                            profilePhotoUrl:
                               type: string
+                              description: "URL of the user's profile photo"
                               example: "https://example.com/profile.jpg"
+                              minLength: 5
+                              maxLength: 256
+                              pattern: "^(https?://.+)$"
+                          required:
+                            - id
+                            - username
+                            - profilePhotoUrl
                       groups:
                         type: array
+                        description: "List of group objects in the conversation"
+                        minItems: 0
+                        maxItems: 1000
                         items:
                           type: object
+                          description: "A group object"
                           properties:
                             id:
                               type: integer
+                              format: int64
+                              description: "Group ID"
                               example: 456
                             name:
                               type: string
+                              description: "Name of the group"
                               example: "Eco Warriors"
+                              minLength: 1
+                              maxLength: 100
+                              pattern: "^[\\w\\s]+$"
                             membersCount:
                               type: integer
+                              description: "Number of members in the group"
                               example: 10
+                          required:
+                            - id
+                            - name
+                            - membersCount
+                    required:
+                      - users
+                      - groups
+                required:
+                  - result
         '400':
-          description: Bad request (error retrieving conversations)
+          description: "Bad request (error retrieving conversations)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Failed to fetch conversations"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
         '401':
-          description: Unauthorized (user not authenticated)
+          description: "Unauthorized (user not authenticated)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Unauthorized error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Unauthorized access"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
+
   /profile/photo:
     post:
       tags:
         - Users
-      summary: Uploads or updates the user's profile photo
-      description: Allows a user to upload a new profile picture.
+      summary: "Uploads or updates the user's profile photo"
+      description: "Allows a user to upload a new profile picture."
       operationId: setMyPhoto
       security:
-        - BearerAuth: [ ]  # Assumes authentication is required
+        - BearerAuth: []
       requestBody:
-        description: Profile picture file upload
+        description: "Profile photo file upload object"
         required: true
         content:
           multipart/form-data:
             schema:
               type: object
+              description: "Object containing the profile photo file"
               properties:
-                profile_picture:
+                profilePicture:
                   type: string
                   format: binary
+                  description: "The profile photo file to upload"
+                  minLength: 1
+                  maxLength: 256
+              required:
+                - profilePicture
       responses:
         '200':
-          description: Profile photo updated successfully
+          description: "Profile photo updated successfully"
           content:
             application/json:
               schema:
                 type: object
+                description: "Response indicating successful profile photo update"
                 properties:
                   success:
                     type: boolean
+                    description: "Indicates if the update was successful"
                     example: true
-        '422':
-          description: Unprocessable Entity (invalid file or update error)
+                required:
+                  - success
+        '400':
+          description: "Bad request (invalid file or update error)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Invalid file format"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
         '401':
-          description: Unauthorized (user not authenticated)
+          description: "Unauthorized (user not authenticated)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Unauthorized error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Unauthorized access"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
+
   /group:
     post:
       tags:
         - Groups
-      summary: Creates a new group
-      description: Allows a user to create a new group with selected members and an optional profile photo.
+      summary: "Creates a new group"
+      description: "Allows a user to create a new group with selected members and an optional profile photo."
       operationId: createGroup
       security:
-        - BearerAuth: [ ]  # Assumes authentication is required
+        - BearerAuth: []
       requestBody:
-        description: Group creation form data
+        description: "Group creation form data"
         required: true
         content:
           multipart/form-data:
             schema:
               type: object
+              description: "Data for creating a new group"
               properties:
                 groupName:
                   type: string
-                  description: Name of the group
+                  description: "Name of the group"
                   example: "Eco Warriors"
+                  minLength: 1
+                  maxLength: 100
+                  pattern: "^[\\w\\s]+$"
                 selectedUsers:
                   type: string
-                  description: Comma-separated list of user IDs to be added to the group
+                  description: "Comma-separated list of user IDs to be added to the group"
                   example: "123,456,789"
+                  minLength: 1
+                  maxLength: 256
+                  pattern: "^(\\d+(,\\d+)*)?$"
                 profilePhoto:
                   type: string
                   format: binary
-                  description: Optional profile picture for the group
+                  description: "Optional profile picture for the group"
+                  minLength: 1
+                  maxLength: 256
+              required:
+                - groupName
+                - selectedUsers
       responses:
-        '200':
-          description: Group created successfully
+        '201':
+          description: "Group created successfully"
           content:
             application/json:
               schema:
                 type: object
+                description: "Response indicating successful group creation"
                 properties:
                   success:
                     type: boolean
+                    description: "Indicates if the group was created successfully"
                     example: true
+                required:
+                  - success
         '400':
-          description: Bad request (missing required fields)
+          description: "Bad request (missing required fields or invalid data)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Group name is required"
-        '422':
-          description: Unprocessable Entity (form data parsing error)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Unable to parse form data"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
         '401':
-          description: Unauthorized (user not authenticated)
+          description: "Unauthorized (user not authenticated)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Unauthorized error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Unauthorized access"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
+
   /group/users:
     post:
       tags:
         - Groups
-      summary: Adds users to a group
-      description: Allows adding multiple users to an existing group.
+      summary: "Adds users to a group"
+      description: "Allows adding multiple users to an existing group."
       operationId: addToGroup
       security:
-        - BearerAuth: []  # Assumes authentication is required
+        - BearerAuth: []
       requestBody:
-        description: Users to be added to a group
+        description: "Users to be added to a group"
         required: true
         content:
           application/json:
             schema:
               type: object
+              description: "Request object for adding users to a group"
               properties:
                 groupId:
                   type: integer
-                  description: ID of the group
+                  format: int64
+                  description: "ID of the group"
                   example: 101
                 userIds:
                   type: array
-                  description: List of user IDs to be added
+                  description: "List of user IDs to be added"
+                  minItems: 1
+                  maxItems: 1000
                   items:
                     type: integer
-                  example: [123, 456, 789]
+                    format: int64
+              required:
+                - groupId
+                - userIds
       responses:
         '200':
-          description: Users added to the group successfully
+          description: "Users added to the group successfully"
           content:
             application/json:
               schema:
                 type: object
+                description: "Response indicating users were added"
                 properties:
                   success:
                     type: boolean
+                    description: "Indicates if the users were added successfully"
                     example: true
-        '422':
-          description: Unprocessable Entity (invalid request body)
+                required:
+                  - success
+        '400':
+          description: "Bad request (invalid request body)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Invalid JSON format"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
         '401':
-          description: Unauthorized (user not authenticated)
+          description: "Unauthorized (user not authenticated)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Unauthorized error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Unauthorized access"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
+
   /group/leave:
     post:
       tags:
         - Groups
-      summary: Leave a group
-      description: Allows a user to leave a specified group.
+      summary: "Leave a group"
+      description: "Allows a user to leave a specified group."
       operationId: leaveGroup
       security:
-        - BearerAuth: [ ]  # Assumes authentication is required
+        - BearerAuth: []
       requestBody:
-        description: Group leave request
+        description: "Group leave request"
         required: true
         content:
           application/json:
             schema:
               type: object
+              description: "Request object for leaving a group"
               properties:
                 groupId:
                   type: integer
-                  description: ID of the group to leave
+                  format: int64
+                  description: "ID of the group to leave"
                   example: 101
+              required:
+                - groupId
       responses:
         '200':
-          description: Successfully left the group
+          description: "Successfully left the group"
           content:
             application/json:
               schema:
                 type: object
+                description: "Response indicating successful group leave"
                 properties:
                   success:
                     type: boolean
+                    description: "Indicates if the operation was successful"
                     example: true
-        '422':
-          description: Unprocessable Entity (invalid request body)
+                required:
+                  - success
+        '400':
+          description: "Bad request (invalid request body)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Invalid JSON format"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
         '401':
-          description: Unauthorized (user not authenticated)
+          description: "Unauthorized (user not authenticated)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Unauthorized error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Unauthorized access"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
+
   /message/send:
     post:
       tags:
         - Messages
-      summary: Send a message
-      description: Allows a user to send a message to another user or a group.
+      summary: "Send a message"
+      description: "Allows a user to send a message to another user or a group."
       operationId: sendMessage
       security:
-        - BearerAuth: [ ]  # Assumes authentication is required
+        - BearerAuth: []
       requestBody:
-        description: Message sending request
+        description: "Message sending request"
         required: true
         content:
           application/json:
             schema:
               type: object
+              description: "Request object for sending a message"
               properties:
                 recipientId:
                   type: integer
-                  description: ID of the recipient (user or group)
+                  format: int64
+                  description: "ID of the recipient (user or group)"
                   example: 456
                 isGroup:
                   type: boolean
-                  description: Specifies whether the recipient is a group
+                  description: "Specifies whether the recipient is a group"
                   example: false
                 content:
                   type: string
-                  description: The message content
+                  description: "The message content"
                   example: "Hello, how are you?"
+                  minLength: 1
+                  maxLength: 1000
+                  pattern: "^[\\s\\S]+$"
+              required:
+                - recipientId
+                - isGroup
+                - content
       responses:
         '200':
-          description: Message sent successfully
+          description: "Message sent successfully"
           content:
             application/json:
               schema:
                 type: object
+                description: "Response containing details of the sent message"
                 properties:
                   messageId:
                     type: integer
-                    description: ID of the sent message
+                    format: int64
+                    description: "ID of the sent message"
                     example: 789
                   senderId:
                     type: integer
-                    description: ID of the sender
+                    format: int64
+                    description: "ID of the sender"
                     example: 123
                   recipientId:
                     type: integer
-                    description: ID of the recipient
+                    format: int64
+                    description: "ID of the recipient"
                     example: 456
                   content:
                     type: string
-                    description: The message content
+                    description: "The message content"
                     example: "Hello, how are you?"
+                    minLength: 1
+                    maxLength: 1000
+                    pattern: "^[\\s\\S]+$"
                   timestamp:
                     type: string
                     format: date-time
-                    description: Timestamp of when the message was sent
-        '422':
-          description: Unprocessable Entity (invalid request body)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Invalid JSON format"
+                    description: "Timestamp of when the message was sent"
+                    example: "2025-02-11T15:00:00Z"
+                    minLength: 20
+                    maxLength: 30
+                    pattern: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+                required:
+                  - messageId
+                  - senderId
+                  - recipientId
+                  - content
+                  - timestamp
         '400':
-          description: Bad request (failed to send message)
+          description: "Bad request (invalid request payload)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Failed to send message"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
         '401':
-          description: Unauthorized (user not authenticated)
+          description: "Unauthorized (user not authenticated)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Unauthorized error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Unauthorized access"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
+
   /message:
     post:
       tags:
         - Messages
-      summary: Delete a message
-      description: Allows a user to delete a specific message by its ID.
+      summary: "Delete a message"
+      description: "Allows a user to delete a specific message by its ID."
       operationId: deleteMessage
       security:
-        - BearerAuth: [ ]  # Assumes authentication is required
+        - BearerAuth: []
       requestBody:
-        description: Message delete request
+        description: "Message delete request"
         required: true
         content:
           application/json:
             schema:
               type: object
+              description: "Request object for deleting a message"
               properties:
                 messageId:
                   type: integer
-                  description: ID of the message to be deleted
+                  format: int64
+                  description: "ID of the message to be deleted"
                   example: 789
+              required:
+                - messageId
       responses:
         '200':
-          description: Message deleted successfully
+          description: "Message deleted successfully"
           content:
             application/json:
               schema:
                 type: object
+                description: "Response indicating successful deletion"
                 properties:
                   success:
                     type: boolean
+                    description: "Indicates if the deletion was successful"
                     example: true
-        '422':
-          description: Unprocessable Entity (invalid request body)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Invalid message ID"
+                required:
+                  - success
         '400':
-          description: Bad request (failed to delete message)
+          description: "Bad request (failed to delete message)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Failed to delete message"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
         '401':
-          description: Unauthorized (user not authenticated)
+          description: "Unauthorized (user not authenticated)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Unauthorized error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Unauthorized access"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
+
   /messages:
     post:
       tags:
         - Messages
-      summary: Retrieve messages
-      description: Fetches messages for a specific user or conversation.
+      summary: "Retrieve messages"
+      description: "Fetches messages for a specific user or conversation."
       operationId: getMessages
       security:
-        - BearerAuth: [ ]  # Assumes authentication is required
+        - BearerAuth: []
       requestBody:
-        description: Request to retrieve messages
+        description: "Request to retrieve messages"
         required: true
         content:
           application/json:
             schema:
               type: object
+              description: "Request object for retrieving messages"
               properties:
                 conversationId:
                   type: integer
-                  description: ID of the conversation
+                  format: int64
+                  description: "ID of the conversation"
                   example: 123
                 recipientId:
                   type: integer
-                  description: ID of the user or group to fetch messages from
+                  format: int64
+                  description: "ID of the user or group to fetch messages from"
                   example: 456
                 limit:
                   type: integer
-                  description: Number of messages to retrieve
+                  description: "Number of messages to retrieve"
                   example: 20
+              required:
+                - conversationId
+                - recipientId
+                - limit
       responses:
         '200':
-          description: Messages retrieved successfully
+          description: "Messages retrieved successfully"
           content:
             application/json:
               schema:
                 type: object
+                description: "Response containing messages"
                 properties:
                   messages:
                     type: array
+                    description: "List of messages"
+                    minItems: 0
+                    maxItems: 1000
                     items:
                       type: object
+                      description: "A message object"
                       properties:
                         messageId:
                           type: integer
-                          description: ID of the message
+                          format: int64
+                          description: "ID of the message"
                           example: 789
                         senderId:
                           type: integer
-                          description: ID of the sender
+                          format: int64
+                          description: "ID of the sender"
                           example: 123
                         recipientId:
                           type: integer
-                          description: ID of the recipient
+                          format: int64
+                          description: "ID of the recipient"
                           example: 456
                         content:
                           type: string
-                          description: The message content
+                          description: "The message content"
                           example: "Hello, how are you?"
+                          minLength: 1
+                          maxLength: 1000
+                          pattern: "^[\\s\\S]+$"
                         timestamp:
                           type: string
                           format: date-time
-                          description: Timestamp of when the message was sent
+                          description: "Timestamp of when the message was sent"
+                          example: "2025-02-11T15:00:00Z"
+                          minLength: 20
+                          maxLength: 30
+                          pattern: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+                      required:
+                        - messageId
+                        - senderId
+                        - recipientId
+                        - content
+                        - timestamp
+                required:
+                  - messages
         '400':
-          description: Bad request (invalid parameters)
+          description: "Bad request (invalid parameters)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Invalid request body"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
         '401':
-          description: Unauthorized (user not authenticated)
+          description: "Unauthorized (user not authenticated)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Unauthorized error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Unauthorized access"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
+
   /message/read:
     post:
       tags:
         - Messages
-      summary: Mark messages as read
-      description: Marks all messages in a conversation as read by the user.
+      summary: "Mark messages as read"
+      description: "Marks all messages in a conversation as read by the user."
       operationId: markAsRead
       security:
-        - BearerAuth: [ ]  # Assumes authentication is required
+        - BearerAuth: []
       requestBody:
-        description: Request to mark messages as read
+        description: "Request to mark messages as read"
         required: true
         content:
           application/json:
             schema:
               type: object
+              description: "Request object for marking messages as read"
               properties:
                 conversationId:
                   type: integer
-                  description: ID of the conversation whose messages should be marked as read
+                  format: int64
+                  description: "ID of the conversation"
                   example: 123
+              required:
+                - conversationId
       responses:
         '200':
-          description: Messages marked as read successfully
+          description: "Messages marked as read successfully"
           content:
             application/json:
               schema:
                 type: object
+                description: "Response indicating messages were marked as read"
                 properties:
                   success:
                     type: boolean
+                    description: "Indicates if the operation was successful"
                     example: true
-        '422':
-          description: Unprocessable Entity (invalid request body)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Invalid conversation ID"
+                required:
+                  - success
         '400':
-          description: Bad request (failed to mark as read)
+          description: "Bad request (failed to mark as read)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Failed to mark messages as read"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
         '401':
-          description: Unauthorized (user not authenticated)
+          description: "Unauthorized (user not authenticated)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Unauthorized error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Unauthorized access"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
+
   /message/send-photo:
     post:
       tags:
-        - Profile
-      summary: Upload a profile photo
-      description: Allows a user to upload a new profile photo.
+        - Users
+      summary: "Upload a profile photo"
+      description: "Allows a user to upload a new profile photo."
       operationId: sendPhoto
       security:
-        - BearerAuth: [ ]  # Assumes authentication is required
+        - BearerAuth: []
       requestBody:
-        description: Upload profile photo
+        description: "Upload profile photo"
         required: true
         content:
           multipart/form-data:
             schema:
               type: object
+              description: "Object containing the profile photo file"
               properties:
-                profile_picture:
+                profilePicture:
                   type: string
                   format: binary
-                  description: The profile photo file to upload
+                  description: "The profile photo file to upload"
+                  minLength: 1
+                  maxLength: 256
+              required:
+                - profilePicture
       responses:
         '200':
-          description: Profile photo uploaded successfully
+          description: "Profile photo uploaded successfully"
           content:
             application/json:
               schema:
                 type: object
+                description: "Response containing the uploaded photo path"
                 properties:
                   success:
                     type: boolean
+                    description: "Indicates if the upload was successful"
                     example: true
                   photoPath:
                     type: string
-                    description: URL or path of the uploaded photo
+                    description: "URL or path of the uploaded photo"
                     example: "/uploads/user123/profile.jpg"
+                    minLength: 5
+                    maxLength: 256
+                    pattern: "^/uploads/.+$"
+                required:
+                  - success
+                  - photoPath
         '400':
-          description: Bad request (failed to upload photo)
+          description: "Bad request (failed to upload photo)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Failed to upload profile picture"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
         '401':
-          description: Unauthorized (user not authenticated)
+          description: "Unauthorized (user not authenticated)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Unauthorized error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Unauthorized access"
-        '422':
-          description: Unprocessable Entity (invalid file format)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Invalid file format"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
+
   /message/comment:
     post:
       tags:
         - Messages
-      summary: Add a comment to a message
-      description: Allows a user to add a comment to an existing message.
+      summary: "Add a comment to a message"
+      description: "Allows a user to add a comment to an existing message."
       operationId: commentMessage
       security:
-        - BearerAuth: [ ]  # Assumes authentication is required
+        - BearerAuth: []
       requestBody:
-        description: Comment details
+        description: "Comment details"
         required: true
         content:
           application/json:
             schema:
               type: object
+              description: "Request object for adding a comment to a message"
               properties:
                 messageId:
                   type: integer
                   format: int64
-                  description: ID of the message to comment on
+                  description: "ID of the message to comment on"
                   example: 12345
                 comment:
                   type: string
-                  description: Comment text
+                  description: "Comment text"
                   example: "This is a great message!"
+                  minLength: 1
+                  maxLength: 500
+                  pattern: "^[\\s\\S]+$"
               required:
                 - messageId
                 - comment
       responses:
         '200':
-          description: Comment added successfully
+          description: "Comment added successfully"
           content:
             application/json:
               schema:
                 type: object
+                description: "Response containing details of the added comment"
                 properties:
                   success:
                     type: boolean
+                    description: "Indicates if the comment was added successfully"
                     example: true
                   commentId:
                     type: integer
                     format: int64
-                    description: ID of the newly added comment
+                    description: "ID of the newly added comment"
                     example: 67890
+                required:
+                  - success
+                  - commentId
         '400':
-          description: Bad request (invalid input)
+          description: "Bad request (invalid input)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Invalid request body"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
         '401':
-          description: Unauthorized (user not authenticated)
+          description: "Unauthorized (user not authenticated)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Unauthorized error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Unauthorized access"
-        '422':
-          description: Unprocessable Entity (validation error)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Failed to process comment"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
+
   /message/uncomment:
     post:
       tags:
         - Messages
-      summary: Remove a comment from a message
-      description: Allows a user to remove a previously added comment from a message.
+      summary: "Remove a comment from a message"
+      description: "Allows a user to remove a previously added comment from a message."
       operationId: uncommentMessage
       security:
-        - BearerAuth: [ ]  # Assumes authentication is required
+        - BearerAuth: []
       requestBody:
-        description: Uncomment request details
+        description: "Uncomment request details"
         required: true
         content:
           application/json:
             schema:
               type: object
+              description: "Request object for removing a comment"
               properties:
                 commentId:
                   type: integer
                   format: int64
-                  description: ID of the comment to remove
+                  description: "ID of the comment to remove"
                   example: 67890
               required:
                 - commentId
       responses:
         '200':
-          description: Comment removed successfully
+          description: "Comment removed successfully"
           content:
             application/json:
               schema:
                 type: object
+                description: "Response indicating the comment was removed"
                 properties:
                   success:
                     type: boolean
+                    description: "Indicates if the comment was successfully removed"
                     example: true
+                required:
+                  - success
         '400':
-          description: Bad request (invalid input)
+          description: "Bad request (invalid input)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Invalid request body"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
         '401':
-          description: Unauthorized (user not authenticated)
+          description: "Unauthorized (user not authenticated)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Unauthorized error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Unauthorized access"
-        '422':
-          description: Unprocessable Entity (validation error)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Failed to remove comment"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
+
   /message/forward:
     post:
       tags:
         - Messages
-      summary: Forward a message to other users
-      description: Allows a user to forward a message or a photo to one or multiple users.
+      summary: "Forward a message to other users"
+      description: "Allows a user to forward a message or a photo to one or multiple users."
       operationId: forwardMessage
       security:
-        - BearerAuth: [ ]  # Assumes authentication is required
+        - BearerAuth: []
       requestBody:
-        description: Forward message request details
+        description: "Forward message request details"
         required: true
         content:
           application/json:
             schema:
               type: object
+              description: "Request object for forwarding a message"
               properties:
                 text:
                   type: string
-                  description: The text of the message or the photo path if forwarding an image.
+                  description: "The text of the message or the photo path if forwarding an image"
                   example: "Hello, check this out!"
+                  minLength: 1
+                  maxLength: 1000
+                  pattern: "^[\\s\\S]+$"
                 isPhoto:
                   type: boolean
-                  description: Indicates whether the forwarded content is a photo.
+                  description: "Indicates whether the forwarded content is a photo"
                   example: false
                 users:
                   type: array
-                  description: List of users to whom the message is forwarded.
+                  description: "List of users to whom the message is forwarded"
+                  minItems: 1
+                  maxItems: 1000
                   items:
                     type: object
+                    description: "A recipient user object"
                     properties:
                       id:
                         type: integer
                         format: int64
-                        description: ID of the recipient user.
+                        description: "ID of the recipient user"
                         example: 12345
+                    required:
+                      - id
               required:
                 - text
                 - isPhoto
                 - users
       responses:
         '200':
-          description: Message forwarded successfully
+          description: "Message forwarded successfully"
           content:
             application/json:
               schema:
-                type: boolean
-                example: true
+                type: object
+                description: "Response indicating the message was forwarded"
+                properties:
+                  success:
+                    type: boolean
+                    description: "Indicates if the message was forwarded successfully"
+                    example: true
+                required:
+                  - success
         '400':
-          description: Bad request (invalid input)
+          description: "Bad request (invalid request payload)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Invalid request body"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error
         '401':
-          description: Unauthorized (user not authenticated)
+          description: "Unauthorized (user not authenticated)"
           content:
             application/json:
               schema:
                 type: object
+                description: "Unauthorized error response"
                 properties:
                   error:
                     type: string
+                    description: "Error message"
                     example: "Unauthorized access"
-        '422':
-          description: Unprocessable Entity (validation error)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Failed to forward message"
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ".*"
+                required:
+                  - error

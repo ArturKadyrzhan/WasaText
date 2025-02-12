@@ -1,6 +1,4 @@
-
 <script>
-import axios from "axios";
 import {getToken} from "../store/auth";
 import {getProfileImage} from "../services/helpers";
 
@@ -65,7 +63,7 @@ export default {
     }
 
     try {
-      const response = await this.$axios.post("/group", formData, {
+      await this.$axios.post("/group", formData, {
         headers: {
           Authorization:` Bearer ${getToken()}`,
           "Content-Type": "multipart/form-data",

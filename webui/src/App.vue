@@ -183,7 +183,7 @@
        this.loading = true;
        this.errormsg = null;
        try {
-         let response = await this.$axios.post("/login", {
+         let response = await this.$axios.post("/session", {
            username: this.username,
            password: this.password,
          });

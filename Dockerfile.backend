@@ -1,10 +1,9 @@
-FROM golang:1.18-alpine
-WORKDIR /app
-RUN apk add --no-cache gcc musl-dev
-COPY go.mod go.sum ./
-RUN go mod download
+FROM golang:1.19.1 AS builder
+WORKDIR /src/
 COPY . .
-RUN go build -o main cmd/webapi/*.go
-EXPOSE 3000
-CMD ["./main"]
-
+RUN go build -o /app/webapi ./cmd/webapi
+FROM debian:bullseye
+EXPOSE 3000 4000
+WORKDIR /app/
+COPY --from=builder /app/webapi ./
+CMD ["/app/webapi"]

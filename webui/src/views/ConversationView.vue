@@ -1,6 +1,5 @@
 <script>
 import {getId, getToken} from "../store/auth";
-import {getProfileImage} from "../services/helpers";
 
 export default {
   data() {
@@ -28,7 +27,7 @@ export default {
       selectedReplyMessage: null,
     };
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.socket) {
       this.socket.close();
     }
@@ -184,7 +183,7 @@ export default {
   },
   async addNewUsers() {
     try {
-      const response = await this.$axios.post(
+      await this.$axios.post(
           "/group/users",
           {
             groupId: this.groupInfo.ID,
@@ -238,7 +237,7 @@ export default {
   markAsRead() {
     const isGroup = !!this.groupInfo.ID;
     try {
-      const response = this.$axios.post(
+       this.$axios.post(
           "/message/read",
           {
             groupId: this.groupInfo.ID,
@@ -367,7 +366,7 @@ export default {
       this.showEmojiPicker = false;
 
       try {
-        const response = this.$axios.post(
+        this.$axios.post(
             "/message/comment",
             {
               messageId: messageId,
@@ -416,11 +415,7 @@ watch: {
 },
 };
 </script>
-
-
-
-
-<template xmlns="http://www.w3.org/1999/html">
+<template>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
   <div class="conversation-page">
