@@ -1,14 +1,10 @@
 ## 📂 **Project Structure from Fantastic Coffee**
 
+###
+docker build -t my-go-app -f Dockerfile.backend .
 
-WASAText aims to accomplish the following objectives:
+docker run -p 3000:3000 --name my-running-app my-go-app
 
--Define APIs using the OpenAPI standard.
+"docker build -t my-frontend -f Dockerfile.frontend ."
 
--Design and develop the server side ("backend") in Go.
-
--Design and develop the client side ("frontend") in JavaScript.
-
--Create a Docker container image for deployment.
-
-
+docker run -p 5173:5173 --name frontend-dev my-frontend

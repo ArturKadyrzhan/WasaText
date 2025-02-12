@@ -10,7 +10,8 @@ WORKDIR /webui
 COPY webui/package.json webui/yarn.lock ./
 
 # Install dependencies
-COPY webui/node_modules ./node_modules
+#COPY webui/node_modules ./node_modules
+RUN yarn install
 
 # Copy the source files
 COPY webui/ .
