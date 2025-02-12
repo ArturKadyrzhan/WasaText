@@ -4,7 +4,7 @@ FROM node:20-alpine
 # Enable Corepack (for Yarn)
 RUN corepack enable
 
-WORKDIR /app
+WORKDIR /webui
 
 # Copy package files first (for caching layers)
 COPY webui/package.json webui/yarn.lock ./

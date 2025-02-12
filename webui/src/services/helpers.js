@@ -5,3 +5,4 @@ export function getProfileImage(fullPath) {
     }
     return fullPath;
 }
+

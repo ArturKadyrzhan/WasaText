@@ -34,7 +34,6 @@ export default {
     }
   },
   methods: {
-    getProfileImage,
     formatTime(timestamp) {
       // const date = new Date(timestamp);
       // return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -221,6 +220,7 @@ export default {
     formData.append('isGroup', isGroup);
     formData.append('groupId', this.groupInfo.ID);
     formData.append('toUserId', this.userInfo.ID);
+    console.log(formData)
 
     try {
       const response = await this.$axios.post("/message/send-photo", formData, {
@@ -464,10 +464,7 @@ watch: {
         <!-- Message content -->
         <div class="message-content">
           <div v-if="message.isPhoto">
-            <img
-                :src="getProfileImage(message.message)"
-                alt="Sent Photo"
-            />
+            <img :src="'http://localhost:3000/' + message.message" alt="Sent Photo" />
           </div>
           <div v-else>
             {{ message.message }}
@@ -561,7 +558,7 @@ watch: {
           <div v-if="userSearchResult.length" class="search-results">
             <ul>
               <li v-for="user in userSearchResult" :key="user.ID" class="search-item">
-                <img :src="getProfileImage(user.ProfilePhotoURL)" alt="Profile" class="profile-photo" />
+                <img :src="'http://localhost:3000/' + user.ProfilePhotoURL" alt="Profile" class="profile-photo" />
                 <div class="user-details">
                   <h5>{{ user.Username }}</h5>
                   <button type="button" @click="addUserToGroup(user)">Add to Group</button>
@@ -573,7 +570,7 @@ watch: {
             <h4>Selected Users</h4>
             <ul>
               <li v-for="user in selectedUsers" :key="user.ID" class="selected-user-item">
-                <img :src="getProfileImage(user.ProfilePhotoURL)" alt="Profile" class="profile-photo" />
+                <img :src="'http://localhost:3000/' + user.ProfilePhotoURL" alt="Profile" class="profile-photo" />
                 <div class="user-details">
                   <h5>{{ user.Username }}</h5>
                   <button type="button" @click="removeUserFromGroup(user)">Remove</button>
@@ -608,7 +605,7 @@ watch: {
           <div v-if="userSearchResult.length" class="search-results">
             <ul>
               <li v-for="user in userSearchResult" :key="user.ID" class="search-item">
-                <img :src="getProfileImage(user.ProfilePhotoURL)" alt="Profile" class="profile-photo" />
+                <img :src="'http://localhost:3000/' + user.ProfilePhotoURL" alt="Profile" class="profile-photo" />
                 <div class="user-details">
                   <h5>{{ user.Username }}</h5>
                   <button type="button" @click="addUserToGroup(user)">Add to Forward Message</button>
@@ -621,7 +618,7 @@ watch: {
             <h4>Selected Users</h4>
             <ul>
               <li v-for="user in selectedUsers" :key="user.ID" class="selected-user-item">
-                <img :src="getProfileImage(user.ProfilePhotoURL)" alt="Profile" class="profile-photo" />
+                <img :src="'http://localhost:3000/' + user.ProfilePhotoURL" alt="Profile" class="profile-photo" />
                 <div class="user-details">
                   <h5>{{ user.Username }}</h5>
                   <button type="button" @click="removeUserFromGroup(user)">Remove</button>

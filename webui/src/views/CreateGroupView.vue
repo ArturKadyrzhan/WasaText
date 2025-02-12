@@ -108,7 +108,7 @@ export default {
         <div v-if="userSearchResult.length" class="search-results">
           <ul>
             <li v-for="user in userSearchResult" :key="user.ID" class="search-item">
-              <img :src="getProfileImage(user.ProfilePhotoURL)" alt="Profile" class="profile-photo" />
+              <img :src="'http://localhost:3000/' + user.ProfilePhotoURL" alt="Profile" class="profile-photo" />
               <div class="user-details">
                 <h5>{{ user.Username }}</h5>
                 <button type="button" @click="addUserToGroup(user)">Add to Group</button> <!-- Changed type to button -->
@@ -121,7 +121,7 @@ export default {
           <h4>Selected Users</h4>
           <ul>
             <li v-for="user in selectedUsers" :key="user.ID" class="selected-user-item">
-              <img :src="getProfileImage(user.ProfilePhotoURL)" alt="Profile" class="profile-photo" />
+              <img :src="'http://localhost:3000/' + user.ProfilePhotoURL" alt="Profile" class="profile-photo" />
               <div class="user-details">
                 <h5>{{ user.Username }}</h5>
                 <button type="button" @click="removeUserFromGroup(user)">Remove</button> <!-- Changed type to button -->

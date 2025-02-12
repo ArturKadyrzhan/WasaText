@@ -71,7 +71,7 @@
                 <div v-if="userSearchResult.length" class="search-results">
                   <ul>
                     <li v-for="user in userSearchResult" :key="user.ID" class="search-item">
-                      <img :src="getProfileImage(user.ProfilePhotoURL)" alt="Profile" class="profile-photo" />
+                      <img :src="'http://localhost:3000/' + user.ProfilePhotoURL" alt="Profile" class="profile-photo" />
                       <div class="user-details">
                         <h5>{{ user.Username }}</h5>
                         <button @click="startConversation(user)">Open Chat</button>
@@ -86,7 +86,7 @@
                 <!-- User Conversations -->
                 <ul v-if="users && users.length">
                   <li v-for="user in users" :key="user.ID" class="conversation-item">
-                    <img :src="getProfileImage(user.ProfilePhotoURL)" alt="Profile" class="profile-photo" />
+                    <img :src="'http://localhost:3000/' + user.ProfilePhotoURL" alt="Profile" class="profile-photo" />
                     <div class="user-details">
                       <h5>{{ user.Username }}</h5>
                       <button @click="startConversation(user)">Open Chat</button>
@@ -99,7 +99,7 @@
                 <ul v-if="groups && groups.length">
 <!--                <ul v-if="groups.length">-->
                   <li v-for="group in groups" :key="group.ID" class="conversation-item">
-                    <img :src="getProfileImage(group.GroupPhotoURL)" alt="Group Profile" class="profile-photo" />
+                    <img :src="'http://localhost:3000/'+ group.GroupPhotoURL" alt="Group Profile" class="profile-photo" />
                     <div class="user-details">
                       <h5>{{ group.Name }}</h5>
                       <button @click="startConversation(group)">Open Chat</button>

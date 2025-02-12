@@ -77,7 +77,9 @@ func New(cfg Config) (Router, error) {
 	router := httprouter.New()
 	router.RedirectTrailingSlash = false
 	router.RedirectFixedPath = false
-
+	router.ServeFiles("/webui/public/images/conversation/*filepath", http.Dir("./webui/public/images/conversation"))
+	router.ServeFiles("/webui/public/images/group/*filepath", http.Dir("./webui/public/images/group"))
+	router.ServeFiles("/webui/public/images/profile/*filepath", http.Dir("./webui/public/images/profile"))
 	return &_router{
 		router:     router,
 		baseLogger: cfg.Logger,

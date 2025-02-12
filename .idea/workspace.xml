@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9942b40d-0ddb-4b55-9e3a-632eda69aa60" name="Changes" comment="" />
+    <list default="true" id="9942b40d-0ddb-4b55-9e3a-632eda69aa60" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile.frontend" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile.frontend" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -46,7 +49,7 @@
     &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;2&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
     &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/artur/GolandProjects/wasaodin/doc&quot;,
