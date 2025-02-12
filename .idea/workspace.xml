@@ -6,18 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="9942b40d-0ddb-4b55-9e3a-632eda69aa60" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile.backend" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile.backend" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile.frontend" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile.frontend" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/database.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/doc/api.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/doc/api.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/api/api-handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/api-handler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/.yarn/install-state.gz" beforeDir="false" afterPath="$PROJECT_DIR$/webui/.yarn/install-state.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/dist/assets/index.8d4948b0.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/dist/assets/index.9320da42.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/dist/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/webui/dist/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/webui/src/App.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/src/views/ConversationView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/webui/src/views/ConversationView.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/src/views/CreateGroupView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/webui/src/views/CreateGroupView.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
