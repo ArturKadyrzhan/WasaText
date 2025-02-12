@@ -7,15 +7,6 @@
     <list default="true" id="9942b40d-0ddb-4b55-9e3a-632eda69aa60" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Dockerfile.frontend" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile.frontend" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/.yarn/cache/@babel-parser-npm-7.26.7-ef2912fba4-3ccc384366.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/.yarn/cache/@babel-types-npm-7.26.7-0a324aa562-2264efd02c.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/.yarn/cache/exponential-backoff-npm-3.1.1-04df458b30-2d9bbb6473.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/.yarn/cache/node-gyp-npm-11.0.0-669e34db1b-5d07430e88.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/.yarn/cache/postcss-npm-8.5.1-90fd898a99-1fbd287531.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/.yarn/cache/semver-npm-7.6.3-57e82c14d5-36b1fbe1a2.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/.yarn/cache/socks-npm-2.8.3-3532b59899-ffcb622c22.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/.yarn/install-state.gz" beforeDir="false" afterPath="$PROJECT_DIR$/webui/.yarn/install-state.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/yarn.lock" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

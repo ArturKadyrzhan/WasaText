@@ -1,6 +1,4 @@
 .DS_Store
-/dist
-/dist-ssr
 coverage
 *.local
 
@@ -17,5 +15,4 @@ coverage
 *.sln
 *.sw?
 
-node_modules/
 
