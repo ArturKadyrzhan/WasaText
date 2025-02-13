@@ -14,5 +14,18 @@ func (db *appdbimpl) GetUser(user *User) (*User, error) {
 		}
 		return &User{}, fmt.Errorf("failed to fetch user: %w", err)
 	}
+
+	return user, nil
+}
+
+func (db *appdbimpl) GetUserById(user *User) (*User, error) {
+	query := `SELECT * FROM users WHERE id = ?`
+	err := db.c.QueryRow(query, user.ID).Scan(&user.ID, &user.Username, &user.ProfilePhotoURL, &user.CreatedAt, &user.UpdatedAt)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return &User{}, nil
+		}
+		return &User{}, fmt.Errorf("failed to fetch user: %w", err)
+	}
 	return user, nil
 }

@@ -235,6 +235,7 @@ export default {
       console.error("Error creating group:", error);
     }
   },
+
   markAsRead() {
     const isGroup = !!this.groupInfo.ID;
     try {

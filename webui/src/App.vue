@@ -47,7 +47,10 @@
           <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
             <div class="position-sticky pt-3 sidebar-sticky">
               <div class="profile-picture-upload">
-                <h3>Upload Profile Picture</h3>
+                <h3>Upload Profile </h3>
+                <input v-model="username" type="text" placeholder="Enter username" />
+                <button @click="updateUsername">Update Username</button>
+                <p v-if="message">{{ message }}</p>
                 <input type="file" @change="onFileChange" accept="image/*" />
                 <button class="upload-button" @click="uploadImage" :disabled="!selectedFile">Upload</button>
                 <div v-if="previewUrl">
@@ -103,6 +106,7 @@
                     <div class="user-details">
                       <h5>{{ group.Name }}</h5>
                       <button @click="startConversation(group)">Open Chat</button>
+                      <button @click="updateGroup(group.ID)">Update Group</button>
                       <button @click="leaveGroup(group)">Leave Group</button>
                     </div>
                   </li>
@@ -136,11 +140,10 @@
   </template>
 
  <script setup>
- import { RouterLink, RouterView } from 'vue-router'
+ import { RouterView } from 'vue-router'
  </script>
  <script>
  import {checkLoginStatus, getToken, logIn, logOut} from "./store/auth";
- import {getProfileImage} from "./services/helpers";
 
  export default {
    data: function() {
@@ -153,9 +156,10 @@
        username: "",
        password: "",
        checkLogin: false,
-       searchQuery: "", // Input for searching users
+       searchQuery: "",
        selectedFile: null,
        previewUrl: null,
+       message: "",
      }
    },
    methods: {
@@ -246,6 +250,12 @@
          name: 'CreateGroup',
        });
      },
+     updateGroup(groupId) {
+       this.$router.push({
+         name: "UpdateGroup",
+         query: { groupId }
+       });
+     },
      onFileChange(event) {
        const file = event.target.files[0];
        if (file) {
@@ -270,6 +280,25 @@
        } catch (error) {
          console.error("Error uploading image:", error);
          alert("Failed to upload image.");
+       }
+     },
+     async updateUsername() {
+       if (!this.username.trim()) {
+         this.message = "Username cannot be empty!";
+         return;
+       }
+       try {
+         const response = await this.$axios.post("/profile/username",{
+           username:this.username
+         },{
+           headers: {
+             Authorization: `Bearer ${getToken()}`,
+           },
+       });
+         this.username = response.data.username;
+         this.message = "Username updated successfully!";
+       } catch (error) {
+         this.message = error.message;
        }
      },
      async leaveGroup(group) {

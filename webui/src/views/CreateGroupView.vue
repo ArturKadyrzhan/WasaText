@@ -1,7 +1,5 @@
 <script>
 import {getToken} from "../store/auth";
-import {getProfileImage} from "../services/helpers";
-import axios from "axios";
 
 
 export default {
@@ -12,11 +10,14 @@ export default {
       groupName: "",
       selectedUsers: [],
       profilePhoto: null,
+      isEditing: false,
+      updatedGroupName: "",
+      updatedProfilePhoto: null,
+      selectedGroup: null,
+
     };
   },
   methods: {
-    getProfileImage,
-    // Поиск пользователей
     async findUsers() {
       if (!this.searchQuery) {
         this.userSearchResult = [];
@@ -37,9 +38,8 @@ export default {
     }
   },
 
-  // Добавить пользователя в группу
+
   addUserToGroup(user) {
-    // Проверка, чтобы избежать добавления одного и того же пользователя дважды
     if (!this.selectedUsers.find((u) => u.ID === user.ID)) {
       this.selectedUsers.push(user);
     }
@@ -48,7 +48,7 @@ export default {
     this.selectedUsers = this.selectedUsers.filter((u) => u.ID !== user.ID);
   },
   handleProfilePhotoUpload(event) {
-    this.profilePhoto = event.target.files[0]; // Store the selected file
+    this.profilePhoto = event.target.files[0];
   },
   async createGroup() {
     if (!this.groupName || this.selectedUsers.length === 0 || !this.profilePhoto) {
@@ -65,7 +65,7 @@ export default {
     }
 
     try {
-      const response = await this.$axios.post("/group", formData, {
+      await this.$axios.post("/group", formData, {
         headers: {
           Authorization:` Bearer ${getToken()}`,
           "Content-Type": "multipart/form-data",
@@ -139,6 +139,8 @@ export default {
     </router-view>
   </div>
 </template>
+
+
 
 <style scoped>
 .create-group {

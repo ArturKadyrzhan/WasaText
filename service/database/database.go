@@ -58,7 +58,9 @@ type AppDatabase interface {
 	MarkAsRead(convId, userId uint) (bool, error)
 	UncommentMessage(payload *UncommentMessage, userId uint) (bool, error)
 	UpdateUserProfile(user *User) (bool, error)
-
+	GetUserById(user *User) (*User, error)
+	UpdateGroupPhoto(id int, groupPhoto string) (bool, error)
+	UpdateGroupName(id int, groupName string) (bool, error)
 	Ping() error
 }
 
