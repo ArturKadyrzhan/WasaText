@@ -396,7 +396,7 @@ paths:
                     pattern: ".*"
                 required:
                   - error
-  /users/set-username:
+  /profile/username:
     post:
       tags:
         - Users
@@ -473,7 +473,7 @@ paths:
                 required:
                   - error
                   
-  /groups/set-group-name:
+  /group/name:
     post:
       tags:
         - Groups
@@ -556,7 +556,7 @@ paths:
                 required:
                   - error
 
-  /groups/set-group-photo:
+  /group/photo:
     post:
       tags:
         - Groups
@@ -1286,7 +1286,7 @@ paths:
   /message/send-photo:
     post:
       tags:
-        - Users
+        - Messages
       summary: "Upload a profile photo"
       description: "Allows a user to upload a new profile photo."
       operationId: sendPhoto

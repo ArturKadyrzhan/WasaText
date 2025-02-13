@@ -117,6 +117,7 @@ export default {
           if (response.data) {
             isReceived = true
           }
+          this.$router.go(0);
           console.log('Message sent:', response.data);
         } catch (error) {
           console.error('Error sending message:', error);
