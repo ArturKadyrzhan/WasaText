@@ -13,10 +13,13 @@ func (h *_router) addToGroup(w http.ResponseWriter, r *http.Request, ps httprout
 		HandleError(w, NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return
 	}
-
-	userId := r.Context().Value("userId").(uint)
-
-	users, err := h.Repository.GetGroupMembers(input.GroupId)
+	userVal := r.Context().Value(keyUserID)
+	userId, ok := userVal.(uint)
+	if !ok {
+		HandleError(w, NewAPIError("invalid user ID in context", http.StatusInternalServerError))
+		return
+	}
+	users, err := h.db.GetGroupMembers(input.GroupId)
 	if err != nil {
 		HandleError(w, NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return
@@ -29,7 +32,7 @@ func (h *_router) addToGroup(w http.ResponseWriter, r *http.Request, ps httprout
 
 	for _, v := range input.Users {
 		if !Contains(userIds, v.ID) {
-			_, err = h.Repository.CreateGroupMembers(v.ID, userId, input.GroupId)
+			_, err = h.db.CreateGroupMembers(v.ID, userId, input.GroupId)
 			if err != nil {
 				HandleError(w, NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 				return

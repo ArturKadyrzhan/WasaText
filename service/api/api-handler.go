@@ -7,8 +7,8 @@ import (
 // Handler returns an instance of httprouter.Router that handle APIs registered here
 func (rt *_router) Handler() http.Handler {
 
-	rt.router.GET("/liveness", rt.healthcheck)
-	rt.router.POST("/session", rt.doLogin)
+	rt.router.GET("/liveness", rt.liveness)
+	rt.router.POST("/session", rt.wrap(rt.doLogin))
 	rt.router.GET("/users", rt.parseUserTokenMiddleware(rt.getUsers))
 	rt.router.GET("/conversations", rt.parseUserTokenMiddleware(rt.getMyConversations))
 	rt.router.POST("/profile/photo", rt.parseUserTokenMiddleware(rt.setMyPhoto))
@@ -17,7 +17,7 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.POST("/group/leave", rt.parseUserTokenMiddleware(rt.leaveGroup))
 	rt.router.POST("/message/send", rt.parseUserTokenMiddleware(rt.sendMessage))
 	rt.router.POST("/message", rt.parseUserTokenMiddleware(rt.deleteMessage))
-	rt.router.POST("/messages", rt.parseUserTokenMiddleware(rt.getMessages))
+	rt.router.POST("/messages", rt.parseUserTokenMiddleware(rt.getConversation))
 	rt.router.POST("/message/read", rt.parseUserTokenMiddleware(rt.markAsRead))
 	rt.router.POST("/message/send-photo", rt.parseUserTokenMiddleware(rt.sendPhoto))
 	rt.router.POST("/message/comment", rt.parseUserTokenMiddleware(rt.commentMessage))

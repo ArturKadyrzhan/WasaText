@@ -1,29 +1,35 @@
 package database
 
 import (
+	"database/sql"
 	"errors"
-	"gorm.io/gorm"
+	"fmt"
 )
 
-func (r *Repository) CheckGroupConversation(groupId uint) (*Conversation, error) {
+func (db *appdbimpl) CheckGroupConversation(groupId uint) (*Conversation, error) {
 	var conv Conversation
 
-	result := r.database.Model(&Conversation{}).
-		Where("group_id = ?", groupId).
-		Where("is_group = ?", true).
-		First(&conv)
+	// Query to check if a group conversation exists
+	query := `SELECT id, user1_id, user2_id, group_id, is_group,created_at,updated_at FROM conversations WHERE group_id = ? AND is_group = ? LIMIT 1`
+	err := db.c.QueryRow(query, groupId, true).Scan(&conv.ID, &conv.User1ID, &conv.User2ID, &conv.GroupID, &conv.IsGroup,
+		&conv.CreatedAt, &conv.UpdatedAt)
 
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+	if err != nil {
+		// If the conversation doesn't exist, create a new one
+		if errors.Is(err, sql.ErrNoRows) {
 			conv = Conversation{
+
 				GroupID: &groupId,
 				IsGroup: true,
 			}
 
-			return r.CreateConversation(&conv)
+			// Call the CreateConversation method to insert a new conversation
+			return db.CreateConversation(&conv)
 		}
-		return nil, result.Error
+		// Return other possible errors from the query
+		return &Conversation{}, fmt.Errorf("failed to check group conversation: %w", err)
 	}
 
+	// Return the existing conversation
 	return &conv, nil
 }

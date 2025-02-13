@@ -43,7 +43,7 @@ func ParseUserToken(accessToken string) (uint, error) {
 
 	claims, ok := token.Claims.(*tokenClaims)
 	if !ok {
-		return 0, errors.New("token claims are not of type *tokenCliams")
+		return 0, errors.New("token claims are not of type *tokenClaims")
 	}
 
 	return claims.UserId, nil
@@ -65,7 +65,6 @@ func SaveUploadedFile(file multipart.File, header *multipart.FileHeader, uploadD
 	if err != nil {
 		return "", err
 	}
-	//defer out.Close()
 
 	// Copy the uploaded file's content to  destination file
 	_, err = io.Copy(out, file)

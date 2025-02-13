@@ -14,7 +14,12 @@ func (h *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
-	userId := r.Context().Value("userId").(uint)
+	userVal := r.Context().Value(keyUserID)
+	userId, ok := userVal.(uint)
+	if !ok {
+		HandleError(w, NewAPIError("invalid user ID in context", http.StatusInternalServerError))
+		return
+	}
 
 	result, err := h.SendMessage(userId, &input)
 	if err != nil {

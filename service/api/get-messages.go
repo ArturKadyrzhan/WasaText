@@ -4,32 +4,35 @@ import (
 	"WasaText/service/consts"
 	"WasaText/service/database"
 	"encoding/json"
-	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
 
-func (h *_router) getMessages(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (h *_router) getConversation(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	var convUserId database.GetMessagesRequest
 	if err := json.NewDecoder(r.Body).Decode(&convUserId); err != nil {
 		HandleError(w, NewAPIError(err.Error(), http.StatusBadRequest))
-		fmt.Println("get message errortttt", err.Error())
 		return
 	}
 
-	userId := r.Context().Value("userId").(uint)
+	userVal := r.Context().Value(keyUserID)
+	userId, ok := userVal.(uint)
+	if !ok {
+		HandleError(w, NewAPIError("invalid user ID in context", http.StatusInternalServerError))
+		return
+	}
 
 	var messages *[]database.Message
 	var err error
 
 	if !convUserId.IsGroup {
-		messages, err = h.Repository.GetPrivateMessages(userId, convUserId.UserOrGroupId)
+		messages, err = h.db.GetPrivateMessages(userId, convUserId.UserOrGroupId)
 		if err != nil {
 			HandleError(w, NewAPIError(err.Error(), http.StatusBadRequest))
 			return
 		}
 	} else {
-		messages, err = h.Repository.GetGroupMessages(convUserId.UserOrGroupId)
+		messages, err = h.db.GetGroupMessages(convUserId.UserOrGroupId)
 		if err != nil {
 			HandleError(w, NewAPIError(err.Error(), http.StatusBadRequest))
 			return

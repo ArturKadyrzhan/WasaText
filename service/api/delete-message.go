@@ -14,7 +14,7 @@ func (h *_router) deleteMessage(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	result, err := h.Repository.DeleteMessage(input.MessageId)
+	result, err := h.db.DeleteMessage(input.MessageId)
 	if err != nil {
 		HandleError(w, NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return

@@ -1,15 +1,21 @@
 package database
 
-import "log"
+import "fmt"
 
-func (r *Repository) MarkAsRead(convId, userId uint) (bool, error) {
-	err := r.database.Model(&Message{}).
-		Where("conversation_id = ? AND is_read = ? AND sender_id != ?", convId, false, userId).
-		Update("is_read", true).Error
+func (db *appdbimpl) MarkAsRead(convId, userId uint) (bool, error) {
+	query := `
+		UPDATE messages
+		SET is_read = ?
+		WHERE conversation_id = ? AND is_read = ? AND sender_id != ?`
+	result, err := db.c.Exec(query, true, convId, false, userId)
 	if err != nil {
-		log.Println("Error updating is_read:", err)
-		return false, err
+		return false, fmt.Errorf("failed to mark messages as read: %w", err)
 	}
 
-	return true, nil
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return false, fmt.Errorf("failed to get rows affected: %w", err)
+	}
+
+	return rowsAffected > 0, nil
 }

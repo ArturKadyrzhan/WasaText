@@ -1,31 +1,22 @@
 package database
 
-import (
-	"errors"
-	"gorm.io/gorm"
-)
+import "fmt"
 
-func (r *Repository) CommentMessage(payload *CommentMessage, userId uint) (bool, error) {
-	var reaction Reaction
-
-	result := r.database.Where("message_id = ? AND user_id = ?", payload.MessageId, userId).First(&reaction)
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			reaction.MessageID = payload.MessageId
-			reaction.UserID = userId
-			reaction.Reaction = payload.Emoji
-
-			if err := r.database.Create(&reaction).Error; err != nil {
-				return false, err
-			}
-		}
-		return false, result.Error
-
+func (db *appdbimpl) CommentMessage(payload *CommentMessage, userId uint) (bool, error) {
+	// Insert a new reaction into the reactions table to represent the comment (emoji)
+	query := `
+		INSERT INTO reactions (message_id, user_id, reaction)
+		VALUES (?, ?, ?)`
+	result, err := db.c.Exec(query, payload.MessageId, userId, payload.Emoji)
+	if err != nil {
+		return false, fmt.Errorf("failed to comment on message: %w", err)
 	}
 
-	if err := r.database.Model(&Reaction{}).Where("message_id = ? AND user_id = ?", payload.MessageId, userId).Update("reaction", payload.Emoji).Error; err != nil {
-		return false, err
+	// Check if the reaction was added
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return false, fmt.Errorf("failed to check rows affected: %w", err)
 	}
 
-	return true, nil
+	return rowsAffected > 0, nil
 }

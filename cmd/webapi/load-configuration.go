@@ -26,6 +26,10 @@ type WebAPIConfiguration struct {
 		ShutdownTimeout time.Duration `conf:"default:5s"`
 	}
 	Debug bool
+
+	DB struct {
+		Filename string `conf:"default:/tmp/decaf.db"`
+	}
 }
 
 func LoadConfiguration() (WebAPIConfiguration, error) {
@@ -55,17 +59,8 @@ func LoadConfiguration() (WebAPIConfiguration, error) {
 		if err != nil {
 			return cfg, fmt.Errorf("can't unmarshal config file: %w", err)
 		}
-		_ = fp.Close()
 	}
-	//err = godotenv.Load()
-	//if err != nil {
-	//	return WebAPIConfiguration{}, err
-	//}
-
-	//ttlHour, _ := strconv.Atoi(os.Getenv("TTL_HOUR"))
-	//cfg.ServerPort = os.Getenv("SERVER_PORT")
-	//cfg.ApiSecret = os.Getenv("API_SECRET")
-	//cfg.TtlHour = ttlHour
+	//fp.Close()
 
 	cfg.ServerPort = "3000"
 	cfg.ApiSecret = "askjsadkjadsjnsadkmlasd123123123"

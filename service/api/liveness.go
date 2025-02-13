@@ -1,17 +1,13 @@
 package api
 
 import (
-	"encoding/json"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
 
-func (h *_router) healthcheck(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	w.Header().Set("Content-Type", "application/json")
-	response := map[string]interface{}{
-		"success": true,
-		"status":  http.StatusOK,
+func (rt *_router) liveness(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	if err := rt.db.Ping(); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(response)
 }

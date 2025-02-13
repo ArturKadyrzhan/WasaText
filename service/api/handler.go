@@ -7,10 +7,6 @@ import (
 	"time"
 )
 
-type Handler struct {
-	Repository *database.Repository
-}
-
 func parseOptionalInt(value string) (int, error) {
 	if value == "undefined" || value == "" {
 		return 0, nil
@@ -23,12 +19,12 @@ func (h *_router) SendMessage(userId uint, input *database.SendMessageRequest) (
 	var err error
 
 	if !input.IsGroup {
-		conv, err = h.Repository.CheckPrivateConversation(userId, input.ToUserId)
+		conv, err = h.db.CheckPrivateConversation(userId, input.ToUserId)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		conv, err = h.Repository.CheckGroupConversation(input.GroupId)
+		conv, err = h.db.CheckGroupConversation(input.GroupId)
 		if err != nil {
 			return nil, err
 		}
@@ -55,5 +51,5 @@ func (h *_router) SendMessage(userId uint, input *database.SendMessageRequest) (
 		}
 	}
 
-	return h.Repository.CreateMessage(&message)
+	return h.db.CreateMessage(&message)
 }

@@ -8,7 +8,12 @@ import (
 )
 
 func (h *_router) uncommentMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	userId := r.Context().Value("userId").(uint)
+	userVal := r.Context().Value(keyUserID)
+	userId, ok := userVal.(uint)
+	if !ok {
+		HandleError(w, NewAPIError("invalid user ID in context", http.StatusInternalServerError))
+		return
+	}
 
 	var input database.UncommentMessage
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
@@ -16,7 +21,7 @@ func (h *_router) uncommentMessage(w http.ResponseWriter, r *http.Request, ps ht
 		return
 	}
 
-	result, err := h.Repository.UncommentMessage(&input, userId)
+	result, err := h.db.UncommentMessage(&input, userId)
 	if err != nil {
 		HandleError(w, NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return

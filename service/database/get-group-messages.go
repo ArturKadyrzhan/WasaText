@@ -1,28 +1,53 @@
 package database
 
 import (
-	"gorm.io/gorm"
-	"log"
+	"database/sql"
+	"errors"
+	"fmt"
 )
 
-func (r *Repository) GetGroupMessages(groupID uint) (*[]Message, error) {
+func (db *appdbimpl) GetGroupMessages(groupID uint) (*[]Message, error) {
 	var conversation Conversation
-	err := r.database.Where("group_id = ?", groupID).First(&conversation).Error
+	// Retrieve conversation by group ID
+	query := `SELECT * FROM conversations WHERE group_id = ?`
+	err := db.c.QueryRow(query, groupID).Scan(&conversation.ID, &conversation.User1ID, &conversation.User2ID, &conversation.GroupID, &conversation.IsGroup, &conversation.CreatedAt, &conversation.UpdatedAt)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, nil
+		if errors.Is(err, sql.ErrNoRows) {
+			return &[]Message{}, nil
 		}
-		log.Println("Error fetching conversation:", err)
-		return nil, err
+		return &[]Message{}, fmt.Errorf("failed to fetch conversation: %w", err)
 	}
 
+	// Retrieve messages for this conversation
 	var messages []Message
-	err = r.database.
-		Where("conversation_id = ?", conversation.ID).
-		Order("created_at asc").
-		Preload("Sender").
-		Preload("Reactions").
-		Find(&messages).Error
+	messageQuery := `SELECT * FROM messages WHERE conversation_id = ? ORDER BY created_at ASC`
+	rows, err := db.c.Query(messageQuery, conversation.ID)
+	if err != nil {
+		return &[]Message{}, fmt.Errorf("failed to fetch messages: %w", err)
+	}
+	defer rows.Close()
 
+	for rows.Next() {
+		var message Message
+		if err := rows.Scan(&message.ID, &message.ConversationID, &message.SenderID, &message.Content, &message.MessageType, &message.CreatedAt, &message.IsRead, &message.RepliedMessageID); err != nil {
+			return &[]Message{}, fmt.Errorf("failed to scan message: %w", err)
+		}
+
+		var reaction Reaction
+		err := db.c.QueryRow(`SELECT id, message_id, user_id, reaction, created_at FROM reactions WHERE message_id = ? LIMIT 1`, message.ID).
+			Scan(&reaction.ID, &reaction.MessageID, &reaction.UserID, &reaction.Reaction, &reaction.CreatedAt)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				message.Reactions = Reaction{}
+			} else {
+				return &[]Message{}, fmt.Errorf("failed to query reaction: %w", err)
+			}
+		} else {
+			message.Reactions = reaction
+		}
+
+		messages = append(messages, message)
+	}
 	return &messages, nil
+
 }

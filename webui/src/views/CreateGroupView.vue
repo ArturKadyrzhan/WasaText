@@ -1,14 +1,16 @@
 <script>
 import {getToken} from "../store/auth";
 import {getProfileImage} from "../services/helpers";
+import axios from "axios";
+
 
 export default {
   data() {
     return {
-      searchQuery: "", // Запрос для поиска пользователей
-      userSearchResult: [], // Результаты поиска пользователей
-      groupName: "", // Название группы
-      selectedUsers: [], // Массив выбранных пользователей
+      searchQuery: "",
+      userSearchResult: [],
+      groupName: "",
+      selectedUsers: [],
       profilePhoto: null,
     };
   },
@@ -63,7 +65,7 @@ export default {
     }
 
     try {
-      await this.$axios.post("/group", formData, {
+      const response = await this.$axios.post("/group", formData, {
         headers: {
           Authorization:` Bearer ${getToken()}`,
           "Content-Type": "multipart/form-data",
@@ -132,7 +134,7 @@ export default {
       </form>
     </div>
 
-    <!-- Ваши другие элементы и маршруты -->
+
     <router-view>
     </router-view>
   </div>

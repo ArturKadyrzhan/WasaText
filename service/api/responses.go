@@ -20,7 +20,7 @@ type MessagesResponse struct {
 
 func SendMessageResponseHandler(input *database.SendMessageRequest, userId uint, result *database.Message, resultRead bool) (map[string]interface{}, error) {
 	var fromUsername string
-	message := map[string]interface{}{}
+	var message map[string]interface{}
 
 	if input.IsGroup {
 		if input.PhotoPath != "" {

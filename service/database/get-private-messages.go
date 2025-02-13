@@ -1,28 +1,50 @@
 package database
 
 import (
-	"gorm.io/gorm"
-	"log"
+	"database/sql"
+	"errors"
+	"fmt"
 )
 
-func (r *Repository) GetPrivateMessages(user1ID uint, user2ID uint) (*[]Message, error) {
+func (db *appdbimpl) GetPrivateMessages(user1ID uint, user2ID uint) (*[]Message, error) {
 	var conversation Conversation
-	err := r.database.Where("(user1_id = ? AND user2_id = ?) OR (user1_id = ? AND user2_id = ?)", user1ID, user2ID, user2ID, user1ID).First(&conversation).Error
+	query := `
+		SELECT * FROM conversations
+		WHERE (user1_id = ? AND user2_id = ?) OR (user1_id = ? AND user2_id = ?)`
+	err := db.c.QueryRow(query, user1ID, user2ID, user2ID, user1ID).Scan(&conversation.ID, &conversation.User1ID, &conversation.User2ID, &conversation.GroupID, &conversation.IsGroup, &conversation.CreatedAt, &conversation.UpdatedAt)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, nil
+		if errors.Is(err, sql.ErrNoRows) {
+			return &[]Message{}, nil
 		}
-		log.Println("Error fetching conversation:", err)
-		return nil, err
+		return &[]Message{}, fmt.Errorf("failed to fetch conversation: %w", err)
 	}
 
 	var messages []Message
-	err = r.database.
-		Where("conversation_id = ?", conversation.ID).
-		Order("created_at asc").
-		Preload("Sender").
-		Preload("Reactions").
-		Find(&messages).Error
+	messageQuery := `SELECT * FROM messages WHERE conversation_id = ? ORDER BY created_at ASC`
+	rows, err := db.c.Query(messageQuery, conversation.ID)
+	if err != nil {
+		return &[]Message{}, fmt.Errorf("failed to fetch messages: %w", err)
+	}
+	defer rows.Close()
 
+	for rows.Next() {
+		var message Message
+		if err := rows.Scan(&message.ID, &message.ConversationID, &message.SenderID, &message.Content, &message.MessageType, &message.CreatedAt, &message.IsRead, &message.RepliedMessageID); err != nil {
+			return &[]Message{}, fmt.Errorf("failed to scan message: %w", err)
+		}
+		var reaction Reaction
+		err := db.c.QueryRow(`SELECT id, message_id, user_id, reaction, created_at FROM reactions WHERE message_id = ? LIMIT 1`, message.ID).
+			Scan(&reaction.ID, &reaction.MessageID, &reaction.UserID, &reaction.Reaction, &reaction.CreatedAt)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				// No reaction found, return empty reaction (or nil, based on your requirement)
+				message.Reactions = Reaction{}
+			} else {
+				return &[]Message{}, fmt.Errorf("failed to query reaction: %w", err)
+			}
+		}
+		message.Reactions = reaction
+		messages = append(messages, message)
+	}
 	return &messages, nil
 }

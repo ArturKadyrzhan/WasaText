@@ -1,32 +1,29 @@
 package api
 
 import (
+	"WasaText/service/api/reqcontext"
 	"WasaText/service/database"
 	"encoding/json"
-	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
 
-func (h *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (h *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var user database.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		HandleError(w, NewAPIError(err.Error(), http.StatusBadRequest))
-		fmt.Println("1", err.Error)
 		return
 	}
-	existUser, err := h.Repository.GetUser(&user)
+	existUser, err := h.db.GetUser(&user)
 	if err != nil {
 		HandleError(w, NewAPIError("Failed to retrieve token", http.StatusBadRequest))
-		fmt.Println("2", err.Error)
 		return
 	}
 
 	if existUser.ID == 0 {
-		existUser, err = h.Repository.CreateUser(&user)
+		existUser, err = h.db.CreateUser(&user)
 		if err != nil {
 			HandleError(w, NewAPIError("Failed to retrieve token", http.StatusBadRequest))
-			fmt.Println("3", err.Error)
 			return
 		}
 
@@ -35,7 +32,6 @@ func (h *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter.
 	token, err := GenerateSessionToken(existUser)
 	if err != nil {
 		HandleError(w, NewAPIError("Failed to retrieve token", http.StatusBadRequest))
-		fmt.Println("4", err.Error)
 		return
 	}
 
@@ -45,12 +41,10 @@ func (h *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter.
 		"username": user.Username,
 	}
 
-	fmt.Println(token)
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(res)
 	if err != nil {
 		HandleError(w, NewAPIError("Failed to encode response", http.StatusBadRequest))
-		fmt.Println("5", err.Error)
 		return
 	}
 }

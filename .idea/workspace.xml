@@ -5,7 +5,61 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9942b40d-0ddb-4b55-9e3a-632eda69aa60" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/webapi/load-configuration.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/webapi/load-configuration.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/webapi/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/webapi/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/api.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/doc/api.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/add-to-group.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/add-to-group.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/api-handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/api-handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/api.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/api.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/comment-message.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/comment-message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/create-group.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/create-group.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/delete-message.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/delete-message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/do-login.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/do-login.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/errors.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/errors.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/forward-message.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/forward-message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/get-messages.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/get-messages.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/get-my-conversations.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/get-my-conversations.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/get-users.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/get-users.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/helpers.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/helpers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/leave-group.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/leave-group.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/liveness.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/liveness.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/log_middleware.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/mark-as-read.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/mark-as-read.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/responses.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/responses.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/send-message.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/send-message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/send-photo.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/send-photo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/set-my-photo.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/set-my-photo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/uncomment-message.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/uncomment-message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/user_middleware.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/user_middleware.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/check-group-conversation.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/check-group-conversation.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/check-private-conversation.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/check-private-conversation.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/comment-message.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/comment-message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/create-group-members.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/create-group-members.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/create-group.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/create-group.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/create-message.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/create-message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/create-user.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/create-user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/database.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/database.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/delete-group-member.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/delete-group-member.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/delete-message.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/delete-message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/get-conversations-users.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/get-conversations-users.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/get-group-members.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/get-group-members.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/get-group-messages.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/get-group-messages.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/get-groups.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/get-groups.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/get-private-messages.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/get-private-messages.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/get-user.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/get-user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/get-users.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/get-users.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/mark-as-read.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/mark-as-read.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/uncomment-message.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/uncomment-message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/update-user-profile.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/update-user-profile.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webui/dist/assets/index.15d85d25.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webui/dist/assets/index.af8b072d.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webui/dist/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/webui/dist/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webui/src/views/ConversationView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/webui/src/views/ConversationView.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webui/src/views/CreateGroupView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/webui/src/views/CreateGroupView.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,28 +97,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "DefaultGoTemplateProperty": "Go File",
-    "OpenAPI/Swagger Code Generator.api.yaml.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "git-widget-placeholder": "main",
-    "go.import.settings.migrated": "true",
-    "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/Users/artur/GolandProjects/wasaodin/doc",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_interpreter_path": "/Users/artur/Library/Application Support/JetBrains/GoLand2024.2/node/versions/22.13.0/bin/node",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "project.propDebugger",
-    "ts.external.directory.path": "/Applications/GoLand.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;OpenAPI/Swagger Code Generator.api.yaml.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/artur/GolandProjects/wasaodin/doc&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_interpreter_path&quot;: &quot;/Users/artur/Library/Application Support/JetBrains/GoLand2024.2/node/versions/22.13.0/bin/node&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propDebugger&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Applications/GoLand.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/doc" />

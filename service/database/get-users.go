@@ -1,12 +1,25 @@
 package database
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
-func (r *Repository) GetUsers(query string, userId uint) (*[]User, error) {
-	var users []User
-	if err := r.database.Where("LOWER(username) LIKE ? AND id != ?",
-		"%"+strings.ToLower(query)+"%", userId).Find(&users).Error; err != nil {
-		return nil, err
+func (db *appdbimpl) GetUsers(query string, userId uint) (*[]User, error) {
+	users := []User{}
+	searchQuery := `SELECT * FROM users WHERE LOWER(username) LIKE ? AND id != ?`
+	rows, err := db.c.Query(searchQuery, "%"+strings.ToLower(query)+"%", userId)
+	if err != nil {
+		return &users, fmt.Errorf("failed to search users: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var user User
+		if err := rows.Scan(&user.ID, &user.Username, &user.ProfilePhotoURL, &user.CreatedAt, &user.UpdatedAt); err != nil {
+			return &users, fmt.Errorf("failed to scan user: %w", err)
+		}
+		users = append(users, user)
 	}
 	return &users, nil
 }

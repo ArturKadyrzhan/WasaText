@@ -7,13 +7,13 @@ import (
 	"net/http"
 )
 
-func NewHandler(repository *database.Repository) *Handler {
-	return &Handler{Repository: repository}
-}
-
 func (h *_router) createGroup(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	userId := r.Context().Value("userId").(uint)
-
+	userVal := r.Context().Value(keyUserID)
+	userId, ok := userVal.(uint)
+	if !ok {
+		HandleError(w, NewAPIError("invalid user ID in context", http.StatusInternalServerError))
+		return
+	}
 	err := r.ParseMultipartForm(10 << 20)
 	if err != nil {
 		HandleError(w, NewAPIError("Unable to parse form data", http.StatusUnprocessableEntity))
@@ -55,20 +55,20 @@ func (h *_router) createGroup(w http.ResponseWriter, r *http.Request, ps httprou
 		GroupPhotoPath: filepath,
 		Users:          users,
 	}
-	group, err := h.Repository.CreateGroup(payload, userId)
+	group, err := h.db.CreateGroup(payload, userId)
 	if err != nil {
 		HandleError(w, NewAPIError(err.Error(), http.StatusBadRequest))
 		return
 	}
 
-	_, err = h.Repository.CreateGroupMembers(userId, userId, group.ID)
+	_, err = h.db.CreateGroupMembers(userId, userId, group.ID)
 	if err != nil {
 		HandleError(w, NewAPIError(err.Error(), http.StatusBadRequest))
 		return
 	}
 
 	for _, user := range payload.Users {
-		_, err = h.Repository.CreateGroupMembers(user.ID, userId, group.ID)
+		_, err = h.db.CreateGroupMembers(user.ID, userId, group.ID)
 		if err != nil {
 			HandleError(w, NewAPIError(err.Error(), http.StatusBadRequest))
 			return

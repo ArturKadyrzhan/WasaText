@@ -9,9 +9,10 @@ import (
 )
 
 func (h *_router) sendPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	userId, ok := r.Context().Value("userId").(uint)
+	userVal := r.Context().Value(keyUserID)
+	userId, ok := userVal.(uint)
 	if !ok {
-		HandleError(w, NewAPIError("Invalid user ID", http.StatusUnauthorized))
+		HandleError(w, NewAPIError("invalid user ID in context", http.StatusInternalServerError))
 		return
 	}
 

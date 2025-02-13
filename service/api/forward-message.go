@@ -8,7 +8,12 @@ import (
 )
 
 func (h *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	userId := r.Context().Value("userId").(uint)
+	userVal := r.Context().Value(keyUserID)
+	userId, ok := userVal.(uint)
+	if !ok {
+		HandleError(w, NewAPIError("invalid user ID in context", http.StatusInternalServerError))
+		return
+	}
 
 	var input database.ForwardMessage
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {

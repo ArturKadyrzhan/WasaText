@@ -5,10 +5,12 @@ import (
 	"WasaText/service/database"
 	"WasaText/service/globaltime"
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"github.com/ardanlabs/conf"
 	"github.com/sirupsen/logrus"
+	"log"
 	"math/rand"
 	"net/http"
 	"os"
@@ -46,11 +48,24 @@ func run() error {
 
 	// Start Database
 	logger.Println("initializing database support")
-
-	db, err := database.NewGormSqliteDB()
-
+	_, err = os.Create(cfg.DB.Filename) // Creates an empty file if it doesn't exist
 	if err != nil {
-		logrus.Fatalf("failed to initialize db: %s", err.Error())
+		log.Fatal(err)
+	}
+	//file.Close()
+	dbconn, err := sql.Open("sqlite3", cfg.DB.Filename+"?_journal_mode=WAL")
+	if err != nil {
+		logger.WithError(err).Error("error opening SQLite DB")
+		return fmt.Errorf("opening SQLite: %w", err)
+	}
+	defer func() {
+		logger.Debug("database stopping")
+		_ = dbconn.Close()
+	}()
+	db, err := database.New(dbconn)
+	if err != nil {
+		logger.WithError(err).Error("error creating AppDatabase")
+		return fmt.Errorf("creating AppDatabase: %w", err)
 	}
 
 	// Start (main) API server
@@ -67,8 +82,8 @@ func run() error {
 
 	// Create the API router
 	apirouter, err := api.New(api.Config{
-		Logger:     logger,
-		Repository: database.NewRepository(db),
+		Logger:   logger,
+		Database: db,
 	})
 	if err != nil {
 		logger.WithError(err).Error("error creating the API server instance")

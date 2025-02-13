@@ -14,9 +14,14 @@ func (h *_router) leaveGroup(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
-	userId := r.Context().Value("userId").(uint)
+	userVal := r.Context().Value(keyUserID)
+	userId, ok := userVal.(uint)
+	if !ok {
+		HandleError(w, NewAPIError("invalid user ID in context", http.StatusInternalServerError))
+		return
+	}
 
-	result, err := h.Repository.DeleteGroupMember(userId, input.Group)
+	result, err := h.db.DeleteGroupMember(userId, input.Group)
 	if err != nil {
 		HandleError(w, NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return

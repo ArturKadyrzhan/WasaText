@@ -50,7 +50,7 @@ type Config struct {
 	Logger logrus.FieldLogger
 
 	// Database is the instance of database.AppDatabase where data are saved
-	Repository *database.Repository
+	Database database.AppDatabase
 }
 
 // Router is the package API interface representing an API handler builder
@@ -68,7 +68,7 @@ func New(cfg Config) (Router, error) {
 	if cfg.Logger == nil {
 		return nil, errors.New("logger is required")
 	}
-	if cfg.Repository == nil {
+	if cfg.Database == nil {
 		return nil, errors.New("database is required")
 	}
 
@@ -83,7 +83,7 @@ func New(cfg Config) (Router, error) {
 	return &_router{
 		router:     router,
 		baseLogger: cfg.Logger,
-		Repository: cfg.Repository,
+		db:         cfg.Database,
 	}, nil
 }
 
@@ -94,5 +94,5 @@ type _router struct {
 	// Use context logger if available (e.g., in requests) instead of this logger.
 	baseLogger logrus.FieldLogger
 
-	Repository *database.Repository
+	db database.AppDatabase
 }

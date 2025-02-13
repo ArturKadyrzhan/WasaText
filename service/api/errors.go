@@ -26,7 +26,6 @@ func NewAPIError(message string, statusCode int) *APIError {
 func HandleError(w http.ResponseWriter, err error) {
 	var apiErr *APIError
 	if ok := errors.As(err, &apiErr); ok {
-		fmt.Printf("Error: %s\n", apiErr.StatusCode)
 		// Custom API error
 		w.WriteHeader(apiErr.StatusCode)
 		http.Error(w, apiErr.Message, apiErr.StatusCode)

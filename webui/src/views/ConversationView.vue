@@ -366,7 +366,7 @@ export default {
       this.showEmojiPicker = false;
 
       try {
-        this.$axios.post(
+         this.$axios.post(
             "/message/comment",
             {
               messageId: messageId,

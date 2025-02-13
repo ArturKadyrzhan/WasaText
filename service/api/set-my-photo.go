@@ -8,7 +8,12 @@ import (
 )
 
 func (h *_router) setMyPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	userId := r.Context().Value("userId").(uint)
+	userVal := r.Context().Value(keyUserID)
+	userId, ok := userVal.(uint)
+	if !ok {
+		HandleError(w, NewAPIError("invalid user ID in context", http.StatusInternalServerError))
+		return
+	}
 
 	file, header, err := r.FormFile("profile_picture")
 	if err != nil {
@@ -26,7 +31,7 @@ func (h *_router) setMyPhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	var user database.User
 	user.ID = userId
 	user.ProfilePhotoURL = filepath
-	result, err := h.Repository.UpdateUserProfile(&user)
+	result, err := h.db.UpdateUserProfile(&user)
 	if err != nil {
 		HandleError(w, NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return
