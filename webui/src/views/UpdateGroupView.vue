@@ -28,7 +28,6 @@ export default {
         alert("Please enter a new group name.");
         return;
       }
-
       try {
         await this.$axios.post(
             "/group/name",
@@ -40,12 +39,12 @@ export default {
               headers: { Authorization: `Bearer ${getToken()}` },
             }
         );
-
         alert("Group name updated successfully!");
       } catch (error) {
         console.error("Error updating group name:", error);
         alert("Failed to update group name.");
       }
+      window.location.reload()
     },
 
     async updateGroupPhoto() {
@@ -71,6 +70,7 @@ export default {
         console.error("Error updating group photo:", error);
         alert("Failed to update group photo.");
       }
+      window.location.reload()
     }
   }
 };

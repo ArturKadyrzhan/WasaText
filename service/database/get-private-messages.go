@@ -43,6 +43,11 @@ func (db *appdbimpl) GetPrivateMessages(user1ID uint, user2ID uint) (*[]Message,
 				return &[]Message{}, fmt.Errorf("failed to query reaction: %w", err)
 			}
 		}
+		user, err := db.GetUserById(&User{ID: message.SenderID})
+		if err != nil {
+			return &[]Message{}, fmt.Errorf("failed to get senders username: %w", err)
+		}
+		message.Sender = *user
 		message.Reactions = reaction
 		messages = append(messages, message)
 	}

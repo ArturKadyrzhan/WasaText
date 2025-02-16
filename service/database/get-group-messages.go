@@ -45,6 +45,11 @@ func (db *appdbimpl) GetGroupMessages(groupID uint) (*[]Message, error) {
 		} else {
 			message.Reactions = reaction
 		}
+		user, err := db.GetUserById(&User{ID: message.SenderID})
+		if err != nil {
+			return &[]Message{}, fmt.Errorf("failed to get senders username: %w", err)
+		}
+		message.Sender = *user
 
 		messages = append(messages, message)
 	}

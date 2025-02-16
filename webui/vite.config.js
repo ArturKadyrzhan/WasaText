@@ -21,26 +21,3 @@ export default defineConfig(({command, mode, ssrBuild}) => {
 	return ret;
 }
 )
-
-//
-// // from
-// import { defineConfig } from 'vite'
-// import vue from '@vitejs/plugin-vue'
-// import vueDevTools from 'vite-plugin-vue-devtools'
-//
-// export default defineConfig({
-// 	plugins: [
-// 		vue(),
-// 		vueDevTools(),
-// 	],
-// 	server: {
-// 		proxy: {
-// 			'/webapi': {
-// 				target: 'http://localhost:3000',
-// 				changeOrigin: true,
-// 			}
-// 		},
-// 		host: true,
-// 		port: 5173
-// 	}
-// })

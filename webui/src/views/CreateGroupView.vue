@@ -1,3 +1,8 @@
+<script setup>
+const apiUrl = __API_URL__; // Directly using the constant from Vite config
+</script>
+
+
 <script>
 import {getToken} from "../store/auth";
 
@@ -23,22 +28,18 @@ export default {
         this.userSearchResult = [];
         return;
       }
-
       try {
         let response = await this.$axios.get(`/users?search=${this.searchQuery}`, {
         headers: {
           'Authorization': `Bearer ${getToken()}`
         }
       });
-
       this.userSearchResult = response.data.users;
     } catch (error) {
       console.error("Error fetching users:", error);
       this.userSearchResult = [];
     }
   },
-
-
   addUserToGroup(user) {
     if (!this.selectedUsers.find((u) => u.ID === user.ID)) {
       this.selectedUsers.push(user);
@@ -55,7 +56,6 @@ export default {
       alert("Please provide a group name and invite at least one user and upload group photo.");
       return;
     }
-
     const formData = new FormData();
     formData.append("groupName", this.groupName);
     formData.append("selectedUsers", JSON.stringify(this.selectedUsers));
@@ -63,7 +63,6 @@ export default {
     if (this.profilePhoto) {
       formData.append("profilePhoto", this.profilePhoto);
     }
-
     try {
       await this.$axios.post("/group", formData, {
         headers: {
@@ -71,7 +70,6 @@ export default {
           "Content-Type": "multipart/form-data",
         },
       });
-
       window.location.reload();
     } catch (error) {
       console.error("Error creating group:", error);
@@ -108,7 +106,7 @@ export default {
         <div v-if="userSearchResult.length" class="search-results">
           <ul>
             <li v-for="user in userSearchResult" :key="user.ID" class="search-item">
-              <img :src="'http://localhost:3000/' + user.ProfilePhotoURL" alt="Profile" class="profile-photo" />
+              <img :src="`${apiUrl}/${user.ProfilePhotoURL}`" alt="Profile" class="profile-photo" />
               <div class="user-details">
                 <h5>{{ user.Username }}</h5>
                 <button type="button" @click="addUserToGroup(user)">Add to Group</button> <!-- Changed type to button -->
@@ -121,7 +119,7 @@ export default {
           <h4>Selected Users</h4>
           <ul>
             <li v-for="user in selectedUsers" :key="user.ID" class="selected-user-item">
-              <img :src="'http://localhost:3000/' + user.ProfilePhotoURL" alt="Profile" class="profile-photo" />
+              <img :src="`${apiUrl}/${user.ProfilePhotoURL}`" alt="Profile" class="profile-photo" />
               <div class="user-details">
                 <h5>{{ user.Username }}</h5>
                 <button type="button" @click="removeUserFromGroup(user)">Remove</button> <!-- Changed type to button -->

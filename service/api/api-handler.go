@@ -11,6 +11,7 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.POST("/session", rt.wrap(rt.doLogin))
 	rt.router.GET("/users", rt.parseUserTokenMiddleware(rt.getUsers))
 	rt.router.GET("/conversations", rt.parseUserTokenMiddleware(rt.getMyConversations))
+	rt.router.GET("/profile", rt.parseUserTokenMiddleware(rt.getUserProfile))
 	rt.router.POST("/profile/photo", rt.parseUserTokenMiddleware(rt.setMyPhoto))
 	rt.router.POST("/profile/username", rt.parseUserTokenMiddleware(rt.setMyUsername))
 	rt.router.POST("/group", rt.parseUserTokenMiddleware(rt.createGroup))

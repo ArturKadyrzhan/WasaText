@@ -14,30 +14,29 @@ func (h *_router) setMyPhoto(w http.ResponseWriter, r *http.Request, ps httprout
 		HandleError(w, NewAPIError("invalid user ID in context", http.StatusInternalServerError))
 		return
 	}
-
 	file, header, err := r.FormFile("profile_picture")
 	if err != nil {
 		HandleError(w, NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return
 	}
 	defer file.Close()
-
 	filepath, err := SaveUploadedFile(file, header, "webui/public/images/profile", userId)
 	if err != nil {
 		HandleError(w, NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return
 	}
-
-	var user database.User
-	user.ID = userId
+	user := database.User{
+		ID: userId,
+	}
+	updateUser, err := h.db.GetUserById(&user)
 	user.ProfilePhotoURL = filepath
-	result, err := h.db.UpdateUserProfile(&user)
+	user.Username = updateUser.Username
+	_, err = h.db.UpdateUserProfile(&user)
 	if err != nil {
 		HandleError(w, NewAPIError(err.Error(), http.StatusUnprocessableEntity))
 		return
 	}
-
-	res := map[string]bool{"success": result}
+	res := map[string]string{"success": filepath}
 
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(res)

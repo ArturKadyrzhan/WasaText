@@ -1,3 +1,7 @@
+<script setup>
+const apiUrl = __API_URL__; // Directly using the constant from Vite config
+</script>
+
 <script>
 import {getId, getToken} from "../store/auth";
 
@@ -34,8 +38,6 @@ export default {
   },
   methods: {
     formatTime(timestamp) {
-      // const date = new Date(timestamp);
-      // return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
       const options = {
         day: '2-digit',
         month: 'short',
@@ -117,15 +119,11 @@ export default {
           if (response.data) {
             isReceived = true
           }
-          this.$router.go(0);
           console.log('Message sent:', response.data);
         } catch (error) {
           console.error('Error sending message:', error);
           this.messages.pop();
         }
-
-
-
         const messageToSend = {
           username:this.authUsername,
           message: this.newMessage,
@@ -134,18 +132,15 @@ export default {
           createdAt: Date(),
           isReceived:isReceived,
         };
-
         this.messages.push(messageToSend);
-
         this.newMessage = "";
-
-
         this.$nextTick(() => {
           const chatMessages = this.$refs.chatMessages;
           chatMessages.scrollTop = chatMessages.scrollHeight;
         });
         this.showReplyModal = false;
       }
+      window.location.reload();
     },
     addUserToGroup(user) {
       if (!this.selectedUsers.some(u => u.ID === user.ID)) {
@@ -169,7 +164,6 @@ export default {
         this.userSearchResult = [];
         return;
       }
-
       try {
         let response = await this.$axios.get(`/users?search=${this.searchQuery}`, {
         headers: {
@@ -213,15 +207,12 @@ export default {
       alert('No file selected!');
       return;
     }
-
     const formData = new FormData();
-
     formData.append('file', file);
     formData.append('isGroup', isGroup);
     formData.append('groupId', this.groupInfo.ID);
     formData.append('toUserId', this.userInfo.ID);
     console.log(formData)
-
     try {
       const response = await this.$axios.post("/message/send-photo", formData, {
         headers: {
@@ -234,8 +225,8 @@ export default {
     } catch (error) {
       console.error("Error creating group:", error);
     }
+    window.location.reload();
   },
-
   markAsRead() {
     const isGroup = !!this.groupInfo.ID;
     try {
@@ -282,20 +273,20 @@ export default {
             },
           }
       );
-
       if(response.data) {
         alert("Message deleted")
-        window.location.reload()
       }
 
     } catch (error) {
       console.error("Error creating group:", error);
     }
+    window.location.reload()
   },
   commentMessage(message) {
     this.showEmojiPicker = true; // Show emoji picker
     this.showContextMenu = false; // Hide context menu
-  },
+  }
+  ,
     async uncommentMessage(message) {
       try {
         const response = await this.$axios.post(
@@ -311,7 +302,6 @@ export default {
         );
         if(response.data) {
           alert("Reaction deleted")
-          window.location.reload()
         } else {
           alert("Reaction couldn't be deleted")
         }
@@ -319,6 +309,7 @@ export default {
       } catch (error) {
         console.error("Error creating group:", error);
       }
+      window.location.reload()
     },
     async forwardMessage() {
       try {
@@ -336,10 +327,8 @@ export default {
               },
             }
         );
-        console.log(response.data,"asdasd")
         if(response.data) {
           alert("Message forwarded")
-          window.location.reload()
         } else {
           alert("Message couldn't be forwarded")
         }
@@ -383,6 +372,7 @@ export default {
       } catch (error) {
         console.error("Error creating group:", error);
       }
+      window.location.reload()
     },
 },
 mounted() {
@@ -444,6 +434,8 @@ watch: {
           :class="['chat-message', message.isSent ? 'sent' : 'received']"
           @contextmenu.prevent="openContextMenu($event, message, index)">
 
+        <!-- shows sender username-->
+
         <!-- Replied Message Section -->
         <div v-if="message.replied" class="replied-message">
           <div class="replied-content">
@@ -453,7 +445,7 @@ watch: {
           </div>
         </div>
 
-        <!-- Name at the top -->
+        <!-- shows sender username-->
         <div class="message-header">
           <span class="message-sender">{{ message.username }}</span>
         </div>
@@ -461,7 +453,7 @@ watch: {
         <!-- Message content -->
         <div class="message-content">
           <div v-if="message.isPhoto">
-            <img :src="'http://localhost:3000/' + message.message" alt="Sent Photo" />
+            <img :src="`${apiUrl}/${message.message}`" alt="Sent Photo" />
           </div>
           <div v-else>
             {{ message.message }}
@@ -473,10 +465,10 @@ watch: {
           <span class="message-time">{{ formatTime(message.createdAt) }}</span>
           <span>{{message.emoji}}</span>
 
-          <div v-if="message.isRead">
+          <div v-if="message.isSent && message.isRead">
             <i class="fas fa-check-double check-icon"></i>
           </div>
-          <div v-else-if="message.isReceived">
+          <div v-else-if="message.isSent">
             <i class="fas fa-check check-icon"></i>
           </div>
         </div>
@@ -555,7 +547,7 @@ watch: {
           <div v-if="userSearchResult.length" class="search-results">
             <ul>
               <li v-for="user in userSearchResult" :key="user.ID" class="search-item">
-                <img :src="'http://localhost:3000/' + user.ProfilePhotoURL" alt="Profile" class="profile-photo" />
+                <img :src="`${apiUrl}/${user.ProfilePhotoURL}`" alt="Profile" class="profile-photo" />
                 <div class="user-details">
                   <h5>{{ user.Username }}</h5>
                   <button type="button" @click="addUserToGroup(user)">Add to Group</button>
@@ -567,7 +559,7 @@ watch: {
             <h4>Selected Users</h4>
             <ul>
               <li v-for="user in selectedUsers" :key="user.ID" class="selected-user-item">
-                <img :src="'http://localhost:3000/' + user.ProfilePhotoURL" alt="Profile" class="profile-photo" />
+                <img :src="`${apiUrl}/${user.ProfilePhotoURL}`" alt="Profile" class="profile-photo" />
                 <div class="user-details">
                   <h5>{{ user.Username }}</h5>
                   <button type="button" @click="removeUserFromGroup(user)">Remove</button>
@@ -602,7 +594,7 @@ watch: {
           <div v-if="userSearchResult.length" class="search-results">
             <ul>
               <li v-for="user in userSearchResult" :key="user.ID" class="search-item">
-                <img :src="'http://localhost:3000/' + user.ProfilePhotoURL" alt="Profile" class="profile-photo" />
+                <img :src="`${apiUrl}/${user.ProfilePhotoURL}`" alt="Profile" class="profile-photo" />
                 <div class="user-details">
                   <h5>{{ user.Username }}</h5>
                   <button type="button" @click="addUserToGroup(user)">Add to Forward Message</button>
@@ -615,7 +607,7 @@ watch: {
             <h4>Selected Users</h4>
             <ul>
               <li v-for="user in selectedUsers" :key="user.ID" class="selected-user-item">
-                <img :src="'http://localhost:3000/' + user.ProfilePhotoURL" alt="Profile" class="profile-photo" />
+                <img :src="`${apiUrl}/${user.ProfilePhotoURL}`" alt="Profile" class="profile-photo" />
                 <div class="user-details">
                   <h5>{{ user.Username }}</h5>
                   <button type="button" @click="removeUserFromGroup(user)">Remove</button>

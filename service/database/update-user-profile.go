@@ -8,7 +8,6 @@ func (db *appdbimpl) UpdateUserProfile(user *User) (bool, error) {
 		UPDATE users 
 		SET profile_photo_url = ? , username =?
 		WHERE id = ?`
-
 	// Execute the UPDATE query
 	result, err := db.c.Exec(query, user.ProfilePhotoURL, user.Username, user.ID)
 	if err != nil {

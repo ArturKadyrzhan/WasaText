@@ -47,8 +47,11 @@
           <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
             <div class="position-sticky pt-3 sidebar-sticky">
               <div class="profile-picture-upload">
-                <h3>Upload Profile </h3>
-                <input v-model="username" type="text" placeholder="Enter username" />
+                <h4>Your Profile Image </h4>
+                <img v-if="profileImage" :src="`${apiUrl}/${profileImage}`" alt="Profile" class="profile-photo" />
+                <p v-else> profile image doesn't exist,upload it...</p>
+                <label for="username">Your current username:</label>
+                <input id="username" v-model="username" type="text" placeholder=" username" />
                 <button @click="updateUsername">Update Username</button>
                 <p v-if="message">{{ message }}</p>
                 <input type="file" @change="onFileChange" accept="image/*" />
@@ -74,7 +77,7 @@
                 <div v-if="userSearchResult.length" class="search-results">
                   <ul>
                     <li v-for="user in userSearchResult" :key="user.ID" class="search-item">
-                      <img :src="'http://localhost:3000/' + user.ProfilePhotoURL" alt="Profile" class="profile-photo" />
+                      <img :src="`${apiUrl}/${user.ProfilePhotoURL}`" alt="Profile" class="profile-photo" />
                       <div class="user-details">
                         <h5>{{ user.Username }}</h5>
                         <button @click="startConversation(user)">Open Chat</button>
@@ -89,7 +92,7 @@
                 <!-- User Conversations -->
                 <ul v-if="users && users.length">
                   <li v-for="user in users" :key="user.ID" class="conversation-item">
-                    <img :src="'http://localhost:3000/' + user.ProfilePhotoURL" alt="Profile" class="profile-photo" />
+                    <img :src="`${apiUrl}/${user.ProfilePhotoURL}`" alt="Profile" class="profile-photo" />
                     <div class="user-details">
                       <h5>{{ user.Username }}</h5>
                       <button @click="startConversation(user)">Open Chat</button>
@@ -102,7 +105,7 @@
                 <ul v-if="groups && groups.length">
 <!--                <ul v-if="groups.length">-->
                   <li v-for="group in groups" :key="group.ID" class="conversation-item">
-                    <img :src="'http://localhost:3000/'+ group.GroupPhotoURL" alt="Group Profile" class="profile-photo" />
+                    <img :src="`${apiUrl}/${group.GroupPhotoURL}`" alt="Group Profile" class="profile-photo" />
                     <div class="user-details">
                       <h5>{{ group.Name }}</h5>
                       <button @click="startConversation(group)">Open Chat</button>
@@ -141,6 +144,7 @@
 
  <script setup>
  import { RouterView } from 'vue-router'
+ const apiUrl = __API_URL__;
  </script>
  <script>
  import {checkLoginStatus, getToken, logIn, logOut} from "./store/auth";
@@ -160,6 +164,7 @@
        selectedFile: null,
        previewUrl: null,
        message: "",
+       profileImage: null,
      }
    },
    methods: {
@@ -168,14 +173,12 @@
          this.userSearchResult = [];
          return;
        }
-
        try {
          let response = await this.$axios.get(`/users?search=${this.searchQuery}`, {
            headers: {
              'Authorization': `Bearer ${getToken()}`
            }
          });
-
          this.userSearchResult = response.data['users'];
          console.log(this.userSearchResult, "USER")
        } catch (error) {
@@ -192,12 +195,13 @@
            password: this.password,
          });
          logIn(response.data['token'], response.data['id'], response.data['username'])
-         window.location.reload();
+
        } catch (e) {
          console.log(e,"eror meror")
          this.errormsg = "Login failed. Please check your credentials.";
        }
        this.loading = false;
+       window.location.reload();
      },
      async fetchConversations() {
        try {
@@ -226,19 +230,30 @@
          }
        }
      },
+     async fetchProfile() {
+       try {
+         const response = await this.$axios.get("/profile", {
+           headers: { Authorization: `Bearer ${getToken()}` },
+         });
+         this.username = response.data.profile.Username;
+         this.profileImage = response.data.profile.ProfilePhotoURL;
+         console.log(response.data)
+         console.log(this.username)
+         console.log(this.profileImage)
+       } catch (error) {
+         console.error("Error fetching profile:", error);
+         this.message = "Failed to load profile.";
+       }
+     },
      startConversation(userOrGroup) {
        if (!userOrGroup) {
          console.error('Missing user ID. Cannot navigate to conversation.');
          return;
        }
        const isGroup = userOrGroup.Name !== undefined;
-       // Getting url manually
        const entity = encodeURIComponent(JSON.stringify(userOrGroup));
        const isGroupParam = isGroup ? 'true' : 'false';
-
-       // changing URL
        window.location.href = `#/conversation?entity=${entity}&isGroup=${isGroupParam}`;
-       // Reset page
        window.location.reload();
      },
      logout() {
@@ -258,15 +273,18 @@
      },
      onFileChange(event) {
        const file = event.target.files[0];
+       console.log(file)
        if (file) {
          this.selectedFile = file;
          this.previewUrl = URL.createObjectURL(file);
+       }
+       else{
+         console.log("file doesn't selected")
        }
      },
      async uploadImage() {
        const formData = new FormData();
        formData.append("profile_picture", this.selectedFile);
-
        try {
          const response = await this.$axios.post("/profile/photo", formData, {
            headers: {
@@ -275,12 +293,13 @@
            },
          });
          console.log("Image uploaded:", response.data);
+         this.previewUrl=response.data.success;
          alert("Profile picture uploaded successfully!");
-         window.location.reload();
        } catch (error) {
          console.error("Error uploading image:", error);
          alert("Failed to upload image.");
        }
+       window.location.reload();
      },
      async updateUsername() {
        if (!this.username.trim()) {
@@ -296,9 +315,11 @@
            },
        });
          this.username = response.data.username;
+         window.location.reload();
          this.message = "Username updated successfully!";
+         alert("Username updated successfully!")
        } catch (error) {
-         this.message = error.message;
+         this.message = "This username already exists!!!";
        }
      },
      async leaveGroup(group) {
@@ -310,7 +331,7 @@
              Authorization: `Bearer ${getToken()}`,
            },
          });
-
+         window.location.href = `#/`;
          window.location.reload();
        } catch (error) {
          console.error("Error uploading image:", error);
@@ -321,6 +342,7 @@
    mounted() {
      this.checkLogin = checkLoginStatus()
      if (this.checkLogin){
+       this.fetchProfile();
        this.fetchConversations();
      }
    }
@@ -387,9 +409,10 @@
     margin-bottom: 10px;
   }
   .profile-photo {
-    width: 40px;
-    height: 40px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
+    align-content:center;
   }
   .user-details {
     flex: 1;

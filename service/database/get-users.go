@@ -15,10 +15,11 @@ func (db *appdbimpl) GetUsers(query string, userId uint) (*[]User, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var user User
+		user := User{}
 		if err := rows.Scan(&user.ID, &user.Username, &user.ProfilePhotoURL, &user.CreatedAt, &user.UpdatedAt); err != nil {
 			return &users, fmt.Errorf("failed to scan user: %w", err)
 		}
+		fmt.Println(user, "get-users database-dan")
 		users = append(users, user)
 	}
 	return &users, nil
