@@ -147,6 +147,7 @@ func createDatabase(db *sql.DB) error {
 			ID INTEGER PRIMARY KEY AUTOINCREMENT,
 			conversation_id INTEGER NOT NULL,
 			sender_id INTEGER NOT NULL,
+			forwarded_by_id INTEGER,
 			content TEXT NOT NULL,
 			message_type VARCHAR(10) NOT NULL,
 			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -154,6 +155,7 @@ func createDatabase(db *sql.DB) error {
 			replied_message_id INTEGER,
 			FOREIGN KEY (conversation_id) REFERENCES conversations(ID) ON DELETE CASCADE,
 			FOREIGN KEY (sender_id) REFERENCES users(ID) ON DELETE CASCADE,
+			FOREIGN KEY (forwarded_by_id) REFERENCES users(ID) ON DELETE CASCADE,
 			FOREIGN KEY (replied_message_id) REFERENCES messages(ID) ON DELETE CASCADE
 		);`,
 

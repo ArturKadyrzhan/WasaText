@@ -59,6 +59,7 @@ type Message struct {
 	CreatedAt        time.Time `gorm:"autoCreateTime"`
 	IsRead           bool      `gorm:"default:false"`
 	RepliedMessageID *uint
+	ForwardedBy      User `json:"forwardedBy"`
 
 	Conversation Conversation `gorm:"foreignKey:ConversationID;constraint:OnDelete:CASCADE"`
 	Sender       User         `gorm:"foreignKey:SenderID;constraint:OnDelete:CASCADE"`
@@ -91,7 +92,6 @@ func (u *User) TableName() string {
 	return "users"
 }
 
-// requests
 type SendMessageRequest struct {
 	Text             string `json:"text"`
 	ToUserId         uint   ` json:"toUserId"`
@@ -99,6 +99,7 @@ type SendMessageRequest struct {
 	GroupId          uint   `json:"groupId"`
 	PhotoPath        string `json:"photoPath"`
 	RepliedMessageId *uint  `json:"repliedMessageId"`
+	ForwardedById    int    `json:"forwardedById"`
 }
 
 type GetMessagesRequest struct {
@@ -135,8 +136,9 @@ type UncommentMessage struct {
 }
 
 type ForwardMessage struct {
-	MessageId uint   `json:"id"`
-	Text      string `json:"text"`
-	IsPhoto   bool   `json:"isPhoto"`
-	Users     []User `json:"users"`
+	MessageId     uint   `json:"id"`
+	Text          string `json:"text"`
+	IsPhoto       bool   `json:"isPhoto"`
+	Users         []User `json:"users"`
+	ForwardedById int    `json:"forwardedById"`
 }

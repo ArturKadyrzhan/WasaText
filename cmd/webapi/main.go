@@ -52,7 +52,7 @@ func run() error {
 	if err != nil {
 		log.Fatal(err)
 	}
-	//file.Close()
+	// file.Close()
 	dbconn, err := sql.Open("sqlite3", cfg.DB.Filename+"?_journal_mode=WAL")
 	if err != nil {
 		logger.WithError(err).Error("error opening SQLite DB")
@@ -74,7 +74,7 @@ func run() error {
 	// Make a channel to listen for an interrupt or terminate signal from the OS.
 	// Use a buffered channel because the signal package requires it.
 	shutdown := make(chan os.Signal, 1)
-	//signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
+	// signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
 
 	// Make a channel to listen for errors coming from the listener. Use a
 	// buffered channel so the goroutine can exit if we don't collect this error.

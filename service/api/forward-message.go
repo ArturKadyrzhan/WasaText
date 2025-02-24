@@ -23,9 +23,10 @@ func (h *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps http
 	if input.IsPhoto {
 		for _, user := range input.Users {
 			sendMessagePayload := database.SendMessageRequest{
-				ToUserId:  user.ID,
-				IsGroup:   false,
-				PhotoPath: input.Text,
+				ToUserId:      user.ID,
+				IsGroup:       false,
+				PhotoPath:     input.Text,
+				ForwardedById: input.ForwardedById,
 			}
 			_, err := h.SendMessage(userId, &sendMessagePayload)
 			if err != nil {
@@ -36,9 +37,10 @@ func (h *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps http
 	} else {
 		for _, user := range input.Users {
 			sendMessagePayload := database.SendMessageRequest{
-				ToUserId: user.ID,
-				IsGroup:  false,
-				Text:     input.Text,
+				ToUserId:      user.ID,
+				IsGroup:       false,
+				Text:          input.Text,
+				ForwardedById: input.ForwardedById,
 			}
 
 			_, err := h.SendMessage(userId, &sendMessagePayload)

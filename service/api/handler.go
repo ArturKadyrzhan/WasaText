@@ -39,6 +39,7 @@ func (h *_router) SendMessage(userId uint, input *database.SendMessageRequest) (
 			MessageType:      consts.MessageTypeText,
 			CreatedAt:        time.Now(),
 			RepliedMessageID: input.RepliedMessageId,
+			ForwardedBy:      database.User{ID: uint(input.ForwardedById)},
 		}
 	} else {
 		message = database.Message{
@@ -48,6 +49,7 @@ func (h *_router) SendMessage(userId uint, input *database.SendMessageRequest) (
 			MessageType:      consts.MessageTypePhoto,
 			CreatedAt:        time.Now(),
 			RepliedMessageID: input.RepliedMessageId,
+			ForwardedBy:      database.User{ID: uint(input.ForwardedById)},
 		}
 	}
 

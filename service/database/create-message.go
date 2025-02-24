@@ -5,9 +5,9 @@ import "fmt"
 func (db *appdbimpl) CreateMessage(message *Message) (*Message, error) {
 	// Insert into the messages table
 	query := `
-		INSERT INTO messages (conversation_id, sender_id, content, message_type, is_read, replied_message_id)
-		VALUES (?, ?, ?, ?, ?, ?)`
-	result, err := db.c.Exec(query, message.ConversationID, message.SenderID, message.Content, message.MessageType, message.IsRead, message.RepliedMessageID)
+		INSERT INTO messages (conversation_id, sender_id, content, message_type, is_read, replied_message_id,forwarded_by_id)
+		VALUES (?, ?, ?, ?, ?, ?,?)`
+	result, err := db.c.Exec(query, message.ConversationID, message.SenderID, message.Content, message.MessageType, message.IsRead, message.RepliedMessageID, message.ForwardedBy.ID)
 	if err != nil {
 		return &Message{}, fmt.Errorf("failed to create message: %w", err)
 	}

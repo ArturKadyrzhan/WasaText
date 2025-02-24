@@ -6,16 +6,17 @@ import (
 )
 
 type MessagesResponse struct {
-	MessageId      uint                   ` json:"message_id"`
-	Message        string                 ` json:"message"`
-	IsPhoto        bool                   `json:"is_photo"`
-	UserId         uint                   `json:"user_id"`
-	ConversationId uint                   `json:"conversation_id"`
-	Username       string                 `json:"username"`
-	IsRead         bool                   `json:"is_read"`
-	Emoji          string                 `json:"emoji"`
-	RepliedMessage RepliedMessageResponse `json:"replied_message"`
-	CreatedAt      time.Time              `json:"createdAt"`
+	MessageId           uint                   ` json:"message_id"`
+	Message             string                 ` json:"message"`
+	IsPhoto             bool                   `json:"is_photo"`
+	UserId              uint                   `json:"user_id"`
+	ConversationId      uint                   `json:"conversation_id"`
+	Username            string                 `json:"username"`
+	IsRead              bool                   `json:"is_read"`
+	Emoji               string                 `json:"emoji"`
+	RepliedMessage      RepliedMessageResponse `json:"replied_message"`
+	CreatedAt           time.Time              `json:"createdAt"`
+	ForwardedByUsername string                 `json:"forwarded_by_username"`
 }
 
 func SendMessageResponseHandler(input *database.SendMessageRequest, userId uint, result *database.Message, resultRead bool) (map[string]interface{}, error) {

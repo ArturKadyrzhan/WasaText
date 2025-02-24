@@ -4,6 +4,7 @@ import (
 	"WasaText/service/consts"
 	"WasaText/service/database"
 	"encoding/json"
+	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
@@ -68,36 +69,38 @@ func (h *_router) getConversation(w http.ResponseWriter, r *http.Request, ps htt
 
 			if message.MessageType == consts.MessageTypeText {
 				response = append(response, MessagesResponse{
-					MessageId:      message.ID,
-					Message:        message.Content,         // Message text
-					UserId:         message.SenderID,        // Sender user ID
-					ConversationId: message.ConversationID,  // Conversation ID
-					Username:       message.Sender.Username, // Conversation ID
-					CreatedAt:      message.CreatedAt,       // Conversation ID
-					IsPhoto:        false,
-					IsRead:         message.IsRead,
-					Emoji:          emoji,
-					RepliedMessage: repliedMessage,
+					MessageId:           message.ID,
+					Message:             message.Content,         // Message text
+					UserId:              message.SenderID,        // Sender user ID
+					ConversationId:      message.ConversationID,  // Conversation ID
+					Username:            message.Sender.Username, // Conversation ID
+					CreatedAt:           message.CreatedAt,       // Conversation ID
+					IsPhoto:             false,
+					IsRead:              message.IsRead,
+					Emoji:               emoji,
+					RepliedMessage:      repliedMessage,
+					ForwardedByUsername: message.ForwardedBy.Username,
 				})
 			} else {
 				response = append(response, MessagesResponse{
-					MessageId:      message.ID,
-					Message:        message.Content,         // Message text
-					UserId:         message.SenderID,        // Sender user ID
-					ConversationId: message.ConversationID,  // Conversation ID
-					Username:       message.Sender.Username, // Conversation ID
-					CreatedAt:      message.CreatedAt,       // Conversation ID
-					IsPhoto:        true,
-					IsRead:         message.IsRead,
-					Emoji:          emoji,
-					RepliedMessage: repliedMessage,
+					MessageId:           message.ID,
+					Message:             message.Content,         // Message text
+					UserId:              message.SenderID,        // Sender user ID
+					ConversationId:      message.ConversationID,  // Conversation ID
+					Username:            message.Sender.Username, // Conversation ID
+					CreatedAt:           message.CreatedAt,       // Conversation ID
+					IsPhoto:             true,
+					IsRead:              message.IsRead,
+					Emoji:               emoji,
+					RepliedMessage:      repliedMessage,
+					ForwardedByUsername: message.ForwardedBy.Username,
 				})
 			}
 		}
 	}
 
 	res := map[string][]MessagesResponse{"messages": response}
-
+	fmt.Print("%+v", response)
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(res)
 	if err != nil {

@@ -29,11 +29,16 @@ func (db *appdbimpl) GetPrivateMessages(user1ID uint, user2ID uint) (*[]Message,
 
 	for rows.Next() {
 		var message Message
-		if err := rows.Scan(&message.ID, &message.ConversationID, &message.SenderID, &message.Content, &message.MessageType, &message.CreatedAt, &message.IsRead, &message.RepliedMessageID); err != nil {
+		if err := rows.Scan(&message.ID, &message.ConversationID, &message.SenderID, &message.ForwardedBy.ID, &message.Content, &message.MessageType, &message.CreatedAt, &message.IsRead, &message.RepliedMessageID); err != nil {
 			return &[]Message{}, fmt.Errorf("failed to scan message: %w", err)
 		}
+		user, err := db.GetUserById(&message.ForwardedBy)
+		if err != nil {
+			return &[]Message{}, fmt.Errorf("failed to get senders username: %w", err)
+		}
+		message.ForwardedBy = *user
 		var reaction Reaction
-		err := db.c.QueryRow(`SELECT id, message_id, user_id, reaction, created_at FROM reactions WHERE message_id = ? LIMIT 1`, message.ID).
+		err = db.c.QueryRow(`SELECT id, message_id, user_id, reaction, created_at FROM reactions WHERE message_id = ? LIMIT 1`, message.ID).
 			Scan(&reaction.ID, &reaction.MessageID, &reaction.UserID, &reaction.Reaction, &reaction.CreatedAt)
 		if err != nil {
 			if err == sql.ErrNoRows {
@@ -43,11 +48,11 @@ func (db *appdbimpl) GetPrivateMessages(user1ID uint, user2ID uint) (*[]Message,
 				return &[]Message{}, fmt.Errorf("failed to query reaction: %w", err)
 			}
 		}
-		user, err := db.GetUserById(&User{ID: message.SenderID})
+		usersender, err := db.GetUserById(&User{ID: message.SenderID})
 		if err != nil {
 			return &[]Message{}, fmt.Errorf("failed to get senders username: %w", err)
 		}
-		message.Sender = *user
+		message.Sender = *usersender
 		message.Reactions = reaction
 		messages = append(messages, message)
 	}

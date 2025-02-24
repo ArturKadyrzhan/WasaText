@@ -29,7 +29,7 @@ func (db *appdbimpl) GetGroupMessages(groupID uint) (*[]Message, error) {
 
 	for rows.Next() {
 		var message Message
-		if err := rows.Scan(&message.ID, &message.ConversationID, &message.SenderID, &message.Content, &message.MessageType, &message.CreatedAt, &message.IsRead, &message.RepliedMessageID); err != nil {
+		if err := rows.Scan(&message.ID, &message.ConversationID, &message.SenderID, &message.ForwardedBy.ID, &message.Content, &message.MessageType, &message.CreatedAt, &message.IsRead, &message.RepliedMessageID); err != nil {
 			return &[]Message{}, fmt.Errorf("failed to scan message: %w", err)
 		}
 

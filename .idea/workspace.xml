@@ -5,9 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9942b40d-0ddb-4b55-9e3a-632eda69aa60" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_11_02_25,_19_25_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_11_02_25__19_25__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/api/set-my-photo.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/set-my-photo.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webui/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/webui/src/App.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/webapi/load-configuration.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/webapi/load-configuration.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/webapi/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/webapi/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/forward-message.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/forward-message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/get-messages.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/get-messages.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/api/responses.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/api/responses.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/create-message.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/create-message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/database.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/database.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/get-group-messages.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/get-group-messages.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/get-private-messages.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/get-private-messages.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/database/schemas-db.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/database/schemas-db.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webui/dist/assets/index.4520124e.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webui/dist/assets/index.5fb6d859.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webui/dist/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/webui/dist/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webui/src/views/ConversationView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/webui/src/views/ConversationView.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,8 +34,9 @@
       <list>
         <option value="OpenAPI" />
         <option value="Dockerfile" />
-        <option value="Go File" />
         <option value="Vue Composition API Component" />
+        <option value="Go File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>

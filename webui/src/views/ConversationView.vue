@@ -29,6 +29,7 @@ export default {
       selectedForwardedMessage: null,
       showReplyModal: false,
       selectedReplyMessage: null,
+      forwardedById:0,
     };
   },
   beforeUnmount() {
@@ -74,6 +75,8 @@ export default {
           message: message.message,
           isPhoto: message.is_photo,
           isSent: message.user_id == getId(),
+          senderId:message.user_id,
+          forwarded_by_username:message.forwarded_by_username ?? "",
           username: message.username ?? "",
           createdAt: message.createdAt ?? "",
           isReceived:true,
@@ -82,7 +85,7 @@ export default {
           replyTo:message.replied_message,
           replied: message.replied_message && message.replied_message.message_id != 0,
         }));
-        console.log(this.messages)
+        console.log('messages forwarded',this.messages)
       } catch (error) {
         if (error.response) {
           if (error.response.status === 401) {
@@ -319,7 +322,8 @@ export default {
               id: this.selectedForwardedMessage.id,
               text: this.selectedForwardedMessage.message,
               isPhoto: this.selectedForwardedMessage.isPhoto,
-              users: this.selectedUsers
+              users: this.selectedUsers,
+              forwardedById:this.selectedForwardedMessage.senderId,
             },
             {
               headers: {
@@ -446,8 +450,13 @@ watch: {
         </div>
 
         <!-- shows sender username-->
+<!--        <div class="message-header">-->
+<!--          <span class="message-sender">{{ message.username }}</span>-->
+<!--        </div>-->
         <div class="message-header">
-          <span class="message-sender">{{ message.username }}</span>
+            <span class="message-sender">
+             {{ message.forwarded_by_username ? ` Forwarded from   ${message.forwarded_by_username} ` : message.username }}
+            </span>
         </div>
 
         <!-- Message content -->
@@ -533,7 +542,7 @@ watch: {
       <form @submit.prevent="addNewUsers">
 
         <div class="modal-content">
-          <h3>Invite Users</h3>
+          <h3>Find Users</h3>
           <div class="user-finder">
             <input
                 type="text"
@@ -580,7 +589,7 @@ watch: {
       <form @submit.prevent="forwardMessage">
 
         <div class="modal-content">
-          <h3>Invite Users</h3>
+          <h3>Find Users</h3>
           <div class="user-finder">
             <input
                 type="text"
