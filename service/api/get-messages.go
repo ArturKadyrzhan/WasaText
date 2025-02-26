@@ -4,7 +4,6 @@ import (
 	"WasaText/service/consts"
 	"WasaText/service/database"
 	"encoding/json"
-	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
@@ -100,7 +99,6 @@ func (h *_router) getConversation(w http.ResponseWriter, r *http.Request, ps htt
 	}
 
 	res := map[string][]MessagesResponse{"messages": response}
-	fmt.Print("%+v", response)
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(res)
 	if err != nil {
