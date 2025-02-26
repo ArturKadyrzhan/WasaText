@@ -20,11 +20,14 @@ func (db *appdbimpl) GetGroupMembers(groupId uint) (*[]GroupMember, error) {
 
 	for rows.Next() {
 		var groupMember GroupMember
-		if err := rows.Scan(&groupMember.GroupID, &groupMember.UserID, &groupMember.AddedBy, &groupMember.AddedAt); err != nil {
+		if err := rows.Scan(&groupMember.GroupID, &groupMember.UserID, &groupMember.AddedBy, &groupMember.AddedAt, &groupMember.Group.Name, &groupMember.User.Username); err != nil {
 			return &[]GroupMember{}, fmt.Errorf("failed to scan group member: %w", err)
 		}
 		groupMembers = append(groupMembers, groupMember)
 	}
 
+	if err := rows.Err(); err != nil {
+		return &[]GroupMember{}, fmt.Errorf("error iterating over group members: %w", err)
+	}
 	return &groupMembers, nil
 }

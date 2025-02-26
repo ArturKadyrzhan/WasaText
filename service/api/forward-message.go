@@ -26,7 +26,7 @@ func (h *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps http
 				ToUserId:      user.ID,
 				IsGroup:       false,
 				PhotoPath:     input.Text,
-				ForwardedById: input.ForwardedById,
+				ForwardedById: int(userId),
 			}
 			_, err := h.SendMessage(userId, &sendMessagePayload)
 			if err != nil {
@@ -40,7 +40,7 @@ func (h *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps http
 				ToUserId:      user.ID,
 				IsGroup:       false,
 				Text:          input.Text,
-				ForwardedById: input.ForwardedById,
+				ForwardedById: int(userId),
 			}
 
 			_, err := h.SendMessage(userId, &sendMessagePayload)

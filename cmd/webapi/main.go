@@ -26,7 +26,7 @@ func main() {
 
 func run() error {
 	rand.Seed(globaltime.Now().UnixNano())
-	// Load Configuration and defaults
+
 	cfg, err := LoadConfiguration()
 	if err != nil {
 		if errors.Is(err, conf.ErrHelpWanted) {
@@ -35,7 +35,6 @@ func run() error {
 		return err
 	}
 
-	// Init logging
 	logger := logrus.New()
 	logger.SetOutput(os.Stdout)
 	if cfg.Debug {
@@ -46,13 +45,12 @@ func run() error {
 
 	logger.Infof("application initializing")
 
-	// Start Database
 	logger.Println("initializing database support")
-	_, err = os.Create(cfg.DB.Filename) // Creates an empty file if it doesn't exist
+	_, err = os.Create(cfg.DB.Filename)
 	if err != nil {
 		log.Fatal(err)
 	}
-	// file.Close()
+
 	dbconn, err := sql.Open("sqlite3", cfg.DB.Filename+"?_journal_mode=WAL")
 	if err != nil {
 		logger.WithError(err).Error("error opening SQLite DB")
@@ -68,19 +66,12 @@ func run() error {
 		return fmt.Errorf("creating AppDatabase: %w", err)
 	}
 
-	// Start (main) API server
 	logger.Info("initializing API server")
 
-	// Make a channel to listen for an interrupt or terminate signal from the OS.
-	// Use a buffered channel because the signal package requires it.
 	shutdown := make(chan os.Signal, 1)
-	// signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
 
-	// Make a channel to listen for errors coming from the listener. Use a
-	// buffered channel so the goroutine can exit if we don't collect this error.
 	serverErrors := make(chan error, 1)
 
-	// Create the API router
 	apirouter, err := api.New(api.Config{
 		Logger:   logger,
 		Database: db,
@@ -97,10 +88,8 @@ func run() error {
 		return fmt.Errorf("registering web UI handler: %w", err)
 	}
 
-	// Apply CORS policy
 	router = applyCORSHandler(router)
 
-	// Create the API server
 	apiserver := http.Server{
 		Addr:              cfg.Web.APIHost,
 		Handler:           router,
@@ -109,40 +98,34 @@ func run() error {
 		WriteTimeout:      cfg.Web.WriteTimeout,
 	}
 
-	// Start the service listening for requests in a separate goroutine
 	go func() {
 		logger.Infof("API listening on %s", apiserver.Addr)
 		serverErrors <- apiserver.ListenAndServe()
 		logger.Infof("stopping API server")
 	}()
 
-	// Waiting for shutdown signal or POSIX signals
 	select {
 	case err := <-serverErrors:
-		// Non-recoverable server error
+
 		return fmt.Errorf("server error: %w", err)
 
 	case sig := <-shutdown:
 		logger.Infof("signal %v received, start shutdown", sig)
 
-		// Asking API server to shut down and load shed.
 		err := apirouter.Close()
 		if err != nil {
 			logger.WithError(err).Warning("graceful shutdown of apirouter error")
 		}
 
-		// Give outstanding requests a deadline for completion.
 		ctx, cancel := context.WithTimeout(context.Background(), cfg.Web.ShutdownTimeout)
 		defer cancel()
 
-		// Asking listener to shut down and load shed.
 		err = apiserver.Shutdown(ctx)
 		if err != nil {
 			logger.WithError(err).Warning("error during graceful shutdown of HTTP server")
 			err = apiserver.Close()
 		}
 
-		// Log the status of this shutdown.
 		switch {
 		case sig == syscall.SIGSTOP:
 			return errors.New("integrity issue caused shutdown")

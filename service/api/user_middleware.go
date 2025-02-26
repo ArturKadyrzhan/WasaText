@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"log"
 	"net/http"
@@ -31,7 +32,7 @@ func (rt *_router) parseUserTokenMiddleware(fn httpMiddlewareHandler) func(http.
 
 		userId, err := ParseUserToken(token)
 		if err != nil {
-			log.Printf("Token validation error: %v", err)
+			fmt.Errorf("token validation error: %w", err)
 			HandleError(w, NewAPIError(err.Error(), http.StatusUnauthorized))
 			return
 		}

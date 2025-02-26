@@ -10,8 +10,6 @@ func (db *appdbimpl) CreateUser(user *User) (*User, error) {
 	if err != nil {
 		return &User{}, fmt.Errorf("failed to create user: %w", err)
 	}
-
-	// Retrieve the last inserted ID
 	lastInsertID, err := result.LastInsertId()
 	if err != nil {
 		return &User{}, fmt.Errorf("failed to retrieve last insert ID: %w", err)

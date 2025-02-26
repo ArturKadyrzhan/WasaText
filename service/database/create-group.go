@@ -7,8 +7,6 @@ func (db *appdbimpl) CreateGroup(payload *CreateGroupRequest, userId uint) (*Gro
 	group.CreatedBy = userId
 	group.Name = payload.GroupName
 	group.GroupPhotoURL = payload.GroupPhotoPath
-
-	// Insert into the groups table
 	query := `
 		INSERT INTO groups (name, group_photo_url, created_by)
 		VALUES (?, ?, ?)`
@@ -16,8 +14,6 @@ func (db *appdbimpl) CreateGroup(payload *CreateGroupRequest, userId uint) (*Gro
 	if err != nil {
 		return &Group{}, fmt.Errorf("failed to create group: %w", err)
 	}
-
-	// Retrieve the last inserted ID
 	lastInsertID, err := result.LastInsertId()
 	if err != nil {
 		return &Group{}, fmt.Errorf("failed to retrieve last insert ID: %w", err)

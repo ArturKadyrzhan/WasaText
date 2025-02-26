@@ -42,7 +42,7 @@ func (db *appdbimpl) GetPrivateMessages(user1ID uint, user2ID uint) (*[]Message,
 			Scan(&reaction.ID, &reaction.MessageID, &reaction.UserID, &reaction.Reaction, &reaction.CreatedAt)
 		if err != nil {
 			if err == sql.ErrNoRows {
-				// No reaction found, return empty reaction (or nil, based on your requirement)
+
 				message.Reactions = Reaction{}
 			} else {
 				return &[]Message{}, fmt.Errorf("failed to query reaction: %w", err)
@@ -55,6 +55,10 @@ func (db *appdbimpl) GetPrivateMessages(user1ID uint, user2ID uint) (*[]Message,
 		message.Sender = *usersender
 		message.Reactions = reaction
 		messages = append(messages, message)
+	}
+
+	if err := rows.Err(); err != nil {
+		return &[]Message{}, fmt.Errorf("error iterating over messages: %w", err)
 	}
 	return &messages, nil
 }

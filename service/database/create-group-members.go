@@ -6,7 +6,6 @@ import (
 )
 
 func (db *appdbimpl) CreateGroupMembers(userId, addedById, groupId uint) (bool, error) {
-	// Insert into the group_members table
 	query := `
 		INSERT INTO group_members (group_id, user_id, added_by, added_at)
 		VALUES (?, ?, ?, ?)`

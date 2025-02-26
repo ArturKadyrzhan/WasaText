@@ -396,6 +396,7 @@ mounted() {
       console.error('Error parsing conversation data:', error);
     }
   }
+
 },
 watch: {
   userInfo(newValue) {

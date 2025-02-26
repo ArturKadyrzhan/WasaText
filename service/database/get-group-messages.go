@@ -8,7 +8,7 @@ import (
 
 func (db *appdbimpl) GetGroupMessages(groupID uint) (*[]Message, error) {
 	var conversation Conversation
-	// Retrieve conversation by group ID
+
 	query := `SELECT * FROM conversations WHERE group_id = ?`
 	err := db.c.QueryRow(query, groupID).Scan(&conversation.ID, &conversation.User1ID, &conversation.User2ID, &conversation.GroupID, &conversation.IsGroup, &conversation.CreatedAt, &conversation.UpdatedAt)
 	if err != nil {
@@ -18,7 +18,6 @@ func (db *appdbimpl) GetGroupMessages(groupID uint) (*[]Message, error) {
 		return &[]Message{}, fmt.Errorf("failed to fetch conversation: %w", err)
 	}
 
-	// Retrieve messages for this conversation
 	var messages []Message
 	messageQuery := `SELECT * FROM messages WHERE conversation_id = ? ORDER BY created_at ASC`
 	rows, err := db.c.Query(messageQuery, conversation.ID)
@@ -53,6 +52,11 @@ func (db *appdbimpl) GetGroupMessages(groupID uint) (*[]Message, error) {
 
 		messages = append(messages, message)
 	}
+
+	if err := rows.Err(); err != nil {
+		return &[]Message{}, fmt.Errorf("error iterating over messages: %w", err)
+	}
+
 	return &messages, nil
 
 }

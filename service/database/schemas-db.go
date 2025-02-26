@@ -3,10 +3,10 @@ package database
 import "time"
 
 type Conversation struct {
-	ID        uint  ` gorm:"primaryKey"`
-	User1ID   *uint // NULL for groups
-	User2ID   *uint // NULL for local conversations
-	GroupID   *uint // NULL for local conversations
+	ID        uint `gorm:"primaryKey"`
+	User1ID   *uint
+	User2ID   *uint
+	GroupID   *uint
 	IsGroup   bool
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`

@@ -24,5 +24,8 @@ func (db *appdbimpl) GetConversationsUsers(userId uint) (*[]User, error) {
 		users = append(users, user)
 	}
 
+	if err := rows.Err(); err != nil {
+		return &[]User{}, fmt.Errorf("error iterating over rows: %w", err)
+	}
 	return &users, nil
 }

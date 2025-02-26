@@ -1,33 +1,3 @@
-/*
-Package database is the middleware between the app database and the code. All data (de)serialization (save/load) from a
-persistent database are handled here. Database specific logic should never escape this package.
-
-To use this package you need to apply migrations to the database if needed/wanted, connect to it (using the database
-data source name from config), and then initialize an instance of AppDatabase from the DB connection.
-
-For example, this code adds a parameter in `webapi` executable for the database data source name (add it to the
-main.WebAPIConfiguration structure):
-
-	DB struct {
-		Filename string `conf:""`
-	}
-
-This is an example on how to migrate the DB and connect to it:
-
-	// Start Database
-	logger.Println("initializing database support")
-	db, err := sql.Open("sqlite3", "./foo.db")
-	if err != nil {
-		logger.WithError(err).Error("error opening SQLite DB")
-		return fmt.Errorf("opening SQLite: %w", err)
-	}
-	defer func() {
-		logger.Debug("database stopping")
-		_ = db.Close()
-	}()
-
-Then you can initialize the AppDatabase and pass it to the api package.
-*/
 package database
 
 import (
@@ -37,7 +7,6 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-// AppDatabase is the high level interface for the DB
 type AppDatabase interface {
 	CheckGroupConversation(groupId uint) (*Conversation, error)
 	CheckPrivateConversation(user1Id uint, user2Id uint) (*Conversation, error)
@@ -68,14 +37,11 @@ type appdbimpl struct {
 	c *sql.DB
 }
 
-// New returns a new instance of AppDatabase based on the SQLite connection `db`.
-// `db` is required - an error will be returned if `db` is `nil`.
 func New(db *sql.DB) (AppDatabase, error) {
 	if db == nil {
 		return nil, errors.New("database is required when building a AppDatabase")
 	}
 
-	// Check if table exists. If not, the database is empty, and we need to create the structure
 	var tableName string
 	err := db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='users';`).Scan(&tableName)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -96,7 +62,7 @@ func (db *appdbimpl) Ping() error {
 
 func createDatabase(db *sql.DB) error {
 	tables := [7]string{
-		// Users table
+
 		`CREATE TABLE IF NOT EXISTS users (
 			ID INTEGER PRIMARY KEY AUTOINCREMENT,
 			username VARCHAR(16) NOT NULL UNIQUE,
@@ -105,7 +71,6 @@ func createDatabase(db *sql.DB) error {
 			updated_at DATETIME
 		);`,
 
-		// Groups table
 		`CREATE TABLE IF NOT EXISTS groups (
 			ID INTEGER PRIMARY KEY AUTOINCREMENT,
 			name VARCHAR(255) NOT NULL,
@@ -116,7 +81,6 @@ func createDatabase(db *sql.DB) error {
 			FOREIGN KEY (created_by) REFERENCES users(ID) ON DELETE CASCADE
 		);`,
 
-		// Conversations table (handles both private and group conversations)
 		`CREATE TABLE IF NOT EXISTS conversations (
 			ID INTEGER PRIMARY KEY AUTOINCREMENT,
 			user1_id INTEGER,
@@ -130,7 +94,6 @@ func createDatabase(db *sql.DB) error {
 			FOREIGN KEY (group_id) REFERENCES groups(ID) ON DELETE CASCADE
 		);`,
 
-		// Group Members table
 		`CREATE TABLE IF NOT EXISTS group_members (
 			group_id INTEGER NOT NULL,
 			user_id INTEGER NOT NULL,
@@ -142,7 +105,6 @@ func createDatabase(db *sql.DB) error {
 			FOREIGN KEY (added_by) REFERENCES users(ID) ON DELETE CASCADE
 		);`,
 
-		// Messages table
 		`CREATE TABLE IF NOT EXISTS messages (
 			ID INTEGER PRIMARY KEY AUTOINCREMENT,
 			conversation_id INTEGER NOT NULL,
@@ -159,7 +121,6 @@ func createDatabase(db *sql.DB) error {
 			FOREIGN KEY (replied_message_id) REFERENCES messages(ID) ON DELETE CASCADE
 		);`,
 
-		// Reactions table (for emoji messages)
 		`CREATE TABLE IF NOT EXISTS reactions (
 			ID INTEGER PRIMARY KEY AUTOINCREMENT,
 			message_id INTEGER NOT NULL,
@@ -174,7 +135,7 @@ func createDatabase(db *sql.DB) error {
 	for _, sqlStmt := range tables {
 		_, err := db.Exec(sqlStmt)
 		if err != nil {
-			return fmt.Errorf("error creating table: %v", err)
+			return fmt.Errorf("error creating table: %w", err)
 		}
 	}
 

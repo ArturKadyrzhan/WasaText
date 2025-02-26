@@ -70,11 +70,11 @@ func (h *_router) getConversation(w http.ResponseWriter, r *http.Request, ps htt
 			if message.MessageType == consts.MessageTypeText {
 				response = append(response, MessagesResponse{
 					MessageId:           message.ID,
-					Message:             message.Content,         // Message text
-					UserId:              message.SenderID,        // Sender user ID
-					ConversationId:      message.ConversationID,  // Conversation ID
-					Username:            message.Sender.Username, // Conversation ID
-					CreatedAt:           message.CreatedAt,       // Conversation ID
+					Message:             message.Content,
+					UserId:              message.SenderID,
+					ConversationId:      message.ConversationID,
+					Username:            message.Sender.Username,
+					CreatedAt:           message.CreatedAt,
 					IsPhoto:             false,
 					IsRead:              message.IsRead,
 					Emoji:               emoji,
@@ -84,11 +84,11 @@ func (h *_router) getConversation(w http.ResponseWriter, r *http.Request, ps htt
 			} else {
 				response = append(response, MessagesResponse{
 					MessageId:           message.ID,
-					Message:             message.Content,         // Message text
-					UserId:              message.SenderID,        // Sender user ID
-					ConversationId:      message.ConversationID,  // Conversation ID
-					Username:            message.Sender.Username, // Conversation ID
-					CreatedAt:           message.CreatedAt,       // Conversation ID
+					Message:             message.Content,
+					UserId:              message.SenderID,
+					ConversationId:      message.ConversationID,
+					Username:            message.Sender.Username,
+					CreatedAt:           message.CreatedAt,
 					IsPhoto:             true,
 					IsRead:              message.IsRead,
 					Emoji:               emoji,
