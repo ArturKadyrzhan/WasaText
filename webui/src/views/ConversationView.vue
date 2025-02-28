@@ -6,7 +6,7 @@ const apiUrl = __API_URL__; // Directly using the constant from Vite config
 import {getId, getToken} from "../store/auth";
 
 export default {
-  data() {
+  data() { //storing all necessary chat-related variables
     return {
       photoPath:"",
       socket: null,
@@ -38,6 +38,7 @@ export default {
     }
   },
   methods: {
+    // formatting Times
     formatTime(timestamp) {
       const options = {
         day: '2-digit',
@@ -48,16 +49,19 @@ export default {
       };
       return new Date(timestamp).toLocaleDateString(undefined, options);
     },
+    // Redirects the user back to the homepage (/)
     goBack() {
       this.$router.push("/");
     },
+
+    //get-messages.go
     async getMessages(id) {
       const isGroup = this.groupInfo.ID === id;
       console.log(id)
       console.log(this.groupInfo.ID)
       console.log(isGroup)
 
-      try {
+      try { // Sends a POST request to /messages to fetch chat messages.
         let response = await this.$axios.post('/messages',
             {
               id: id,
@@ -65,15 +69,16 @@ export default {
             },
             {
               headers: {
-                'Authorization': `Bearer ${getToken()}`,
+                'Authorization': `Bearer ${getToken()}`, // Includes Authorization: Bearer token in headers.
                 'Content-Type': 'application/json'
               }
             }
         );
+        //  Determines if the message is from the current user.
         this.messages = response.data['messages'].map(message => ({
           id: message.message_id,
           message: message.message,
-          isPhoto: message.is_photo,
+          isPhoto: message.is_photo,  // Checks if the message is an image.
           isSent: message.user_id == getId(),
           senderId:message.user_id,
           forwarded_by_username:message.forwarded_by_username ?? "",
@@ -83,7 +88,7 @@ export default {
           isRead:message.is_read,
           emoji:message.emoji,
           replyTo:message.replied_message,
-          replied: message.replied_message && message.replied_message.message_id != 0,
+          replied: message.replied_message && message.replied_message.message_id != 0, // Checks if the message is a reply.
         }));
         console.log('messages forwarded',this.messages)
       } catch (error) {
@@ -101,12 +106,14 @@ export default {
         }
       }
     },
-    async sendMessage() {
+    // send-message.go
+    async sendMessage() { // Pushes the new message into the chat window.
       if (this.newMessage.trim()) {
         const isGroup = !!this.groupInfo.ID;
         let isReceived = false;
         const repliedMessageId = this.selectedReplyMessage?.id || 0;
         try {
+          // Sends a message to the backend (/message/send).
           const response = await this.$axios.post('/message/send', {
             text: this.newMessage,
             toUserId: this.userInfo.ID,
@@ -143,6 +150,7 @@ export default {
         });
         this.showReplyModal = false;
       }
+      // Resets newMessage to an empty string after sending.
       window.location.reload();
     },
     addUserToGroup(user) {
@@ -162,6 +170,7 @@ export default {
     closeForwardModal() {
       this.showForwardModal = false;
     },
+    //get=users
     async findUsers() {
       if (!this.searchQuery) {
         this.userSearchResult = [];
@@ -179,6 +188,7 @@ export default {
       this.userSearchResult = [];
     }
   },
+    // add-to-group.go
   async addNewUsers() {
     try {
       await this.$axios.post(
@@ -202,6 +212,7 @@ export default {
   triggerFileInput() {
     this.$refs.fileInput.click();
   },
+    //send-photo.go
   async uploadAndSendPhoto(event) {
     const file = event.target.files[0];
     const isGroup = !!this.groupInfo.ID;
@@ -230,6 +241,7 @@ export default {
     }
     window.location.reload();
   },
+  //mark-as-read
   markAsRead() {
     const isGroup = !!this.groupInfo.ID;
     try {
@@ -263,6 +275,8 @@ export default {
     this.showContextMenu = false;
     document.removeEventListener("click", this.closeContextMenu);
   },
+
+  //delete-message.go
   async deleteMessage(message) {
     try {
       const response = await this.$axios.post(
@@ -285,11 +299,12 @@ export default {
     }
     window.location.reload()
   },
+  //comment-message.go
   commentMessage(message) {
     this.showEmojiPicker = true; // Show emoji picker
     this.showContextMenu = false; // Hide context menu
   }
-  ,
+  ,//uncomment-message.go
     async uncommentMessage(message) {
       try {
         const response = await this.$axios.post(
@@ -314,6 +329,7 @@ export default {
       }
       window.location.reload()
     },
+    //forward-message
     async forwardMessage() {
       try {
         const response = await this.$axios.post(
@@ -398,15 +414,16 @@ mounted() {
   }
 
 },
+// Observes changes in userInfo and groupInfo
 watch: {
   userInfo(newValue) {
     if (newValue && newValue.ID) {
-      this.getMessages(newValue.ID);
+      this.getMessages(newValue.ID); // If a new user is selected, fetches messages with getMessages(newValue.ID).
     }
   },
   groupInfo(newValue) {
     if (newValue && newValue.ID) {
-      this.getMessages(newValue.ID);
+      this.getMessages(newValue.ID); // if a new group is selected, fetches messages with getMessages(newValue.ID).
     }
   },
 },

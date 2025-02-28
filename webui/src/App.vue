@@ -142,32 +142,37 @@
     </div>
   </template>
 
- <script setup>
- import { RouterView } from 'vue-router'
- const apiUrl = __API_URL__;
+
+ <script setup> // import dependencies
+ import { RouterView } from 'vue-router' // Allows dynamic rendering of components based on the URL.
+ const apiUrl = __API_URL__;  //  Using a global variable for the API base URL.
  </script>
  <script>
  import {checkLoginStatus, getToken, logIn, logOut} from "./store/auth";
 
  export default {
+   // Defining Component State
    data: function() {
      return {
        userSearchResult: [],
-       users: [],
-       groups:[],
+       users: [], // Stores chat participants.
+       groups:[],  // Stores chat participants.
        errormsg: null,
        loading: false,
-       username: "",
-       password: "",
+       username: "", //  Stores login credentials.
+       password: "", //  Stores login credentials.
        checkLogin: false,
        searchQuery: "",
-       selectedFile: null,
-       previewUrl: null,
+       selectedFile: null,  // Handles image uploads.
+       previewUrl: null,    // Handles image uploads.
        message: "",
        profileImage: null,
      }
    },
    methods: {
+     // get-users.go
+     // 1) Searches for users based on searchQuery
+     // Calls /users?search=query with an auth token, If search fails, it clears results.
      async findUser() {
        if (!this.searchQuery) {
          this.userSearchResult = [];
@@ -186,6 +191,9 @@
          this.userSearchResult = [];
        }
      },
+     // 2)Logging In do-login.go
+     // here we send login credentials (username, password) to /session.
+     // if login fails, shows an error message.
      async login() {
        this.loading = true;
        this.errormsg = null;
@@ -203,6 +211,7 @@
        this.loading = false;
        window.location.reload();
      },
+     //3) get-my-conversations.go, Retrieves your chats with user/groups.
      async fetchConversations() {
        try {
           console.log('Token:',getToken())
@@ -230,6 +239,7 @@
          }
        }
      },
+     //4) get-user-profile.go, Calls /profile to get username & profile image.
      async fetchProfile() {
        try {
          const response = await this.$axios.get("/profile", {
@@ -245,6 +255,7 @@
          this.message = "Failed to load profile.";
        }
      },
+     // Start a chat with someone
      startConversation(userOrGroup) {
        if (!userOrGroup) {
          console.error('Missing user ID. Cannot navigate to conversation.');
@@ -271,6 +282,8 @@
          query: { groupId }
        });
      },
+
+    // Handles profile picture uploads.Converts file into a preview URL before uploading.
      onFileChange(event) {
        const file = event.target.files[0];
        console.log(file)
@@ -282,6 +295,7 @@
          console.log("file doesn't selected")
        }
      },
+     // set-my-photo.go
      async uploadImage() {
        const formData = new FormData();
        formData.append("profile_picture", this.selectedFile);
@@ -301,6 +315,8 @@
        }
        window.location.reload();
      },
+
+     //set-my-username.go
      async updateUsername() {
        if (!this.username.trim()) {
          this.message = "Username cannot be empty!";
@@ -339,14 +355,16 @@
        }
      }
    },
-   mounted() {
-     this.checkLogin = checkLoginStatus()
+   mounted() { // Runs when the component is loaded
+     this.checkLogin = checkLoginStatus() // Retrieves token from localStorage, If a token exists, it:retrive users,chats
      if (this.checkLogin){
        this.fetchProfile();
        this.fetchConversations();
      }
    }
  }
+
+
  </script>
 
   <style>

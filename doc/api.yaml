@@ -1,19 +1,19 @@
 openapi: 3.0.0
 servers:
-  - url: "http://localhost:3000"
+  - url: "http://localhost:3000" #Api runs locally in port 3000
 info:
   title: WASAPhoto
   description: "WASAPhoto API documentation"
   version: 1.0.0
 
 components:
-  securitySchemes:
+  securitySchemes:  #Security of API, for authentication use Bearer where token represented in JWT Format
     BearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
 
-tags:
+tags:              #Dividing API into groups,each group consist of methods connected with certain functionality
   - name: Users
     description: "Operations related to users."
   - name: Messages
@@ -24,29 +24,29 @@ tags:
     description: "Authentication operations."
 
 paths:
-  /session:
-    post:
+  /session:    #1)path (URL-address) where we can address to API
+    post:      #Since we create new object (new session of user)
       tags:
         - Authentication
       summary: "Logs in the user"
       description: "Authenticates the user and returns an access token. If the user does not exist, it will be created."
       operationId: doLogin
-      requestBody:
+      requestBody:  #description of data what API expect from request
         description: "User credentials object"
         required: true
         content:
-          application/json:
+          application/json: #data should be in JSON format
             schema:
-              type: object
+              type: object  #in body of request we send object
               description: "User credentials for login"
-              properties:
+              properties: #list of parameters that we can send
                 username:
                   type: string
                   description: "The user's username"
                   example: "Maria"
-                  minLength: 3
-                  maxLength: 32
-                  pattern: "^[a-zA-Z0-9_]+$"
+                  minLength: 3   #minimal length is 3 symbols
+                  maxLength: 32  # maximum length is 32 symbols
+                  pattern: "^[a-zA-Z0-9_]+$"  #restriction for the format ,means we can use only letter a-z,A-Z,numbers from 0-9 and _
               required:
                 - username
       responses:
@@ -99,15 +99,15 @@ paths:
                 required:
                   - error
 
-  /users:
-    get:
+  /users:     #2)path for retrieving users
+    get:      # using get since we are retrieving information rather than modifying or creating anything.
       tags:
         - Users
       summary: "Retrieves a list of users"
       description: "Fetches users based on a search query."
       operationId: getUsers
       security:
-        - BearerAuth: []
+        - BearerAuth: [] #request requires authentication.
       parameters:
         - name: search
           in: query
@@ -199,14 +199,14 @@ paths:
                   - error
 
   /conversations:
-    get:
+    get:  # 3)since  retrieves conversations this is method get
       tags:
         - Messages
       summary: "Retrieves the user's conversations"
       description: "Fetches the user's private and group conversations."
       operationId: getMyConversations
       security:
-        - BearerAuth: []
+        - BearerAuth: [] #again user must be logged in to use this method.
       responses:
         '200':
           description: "Successfully retrieved user conversations"
@@ -321,7 +321,7 @@ paths:
                 required:
                   - error
 
-  /profile/photo:
+  /profile/photo: #4)we are uploading photo that's why it is post
     post:
       tags:
         - Users
@@ -396,7 +396,8 @@ paths:
                     pattern: ".*"
                 required:
                   - error
-  /profile/username:
+
+  /profile/username: #5) set new username nickname ,since we edit existing data post
     post:
       tags:
         - Users
@@ -473,7 +474,7 @@ paths:
                 required:
                   - error
                   
-  /group/name:
+  /group/name: #6)giving a name group
     post:
       tags:
         - Groups
@@ -556,7 +557,7 @@ paths:
                 required:
                   - error
 
-  /group/photo:
+  /group/photo: #7)update group photo
     post:
       tags:
         - Groups
@@ -638,7 +639,7 @@ paths:
                 required:
                   - error
 
-  /group:
+  /group: #7) creating new group
     post:
       tags:
         - Groups
@@ -729,7 +730,7 @@ paths:
                 required:
                   - error
 
-  /group/users:
+  /group/users: #8)Adding Users to a Group
     post:
       tags:
         - Groups
@@ -813,7 +814,7 @@ paths:
                 required:
                   - error
 
-  /group/leave:
+  /group/leave: #9)leaving a group
     post:
       tags:
         - Groups

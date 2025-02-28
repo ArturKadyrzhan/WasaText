@@ -1,20 +1,24 @@
 package api
 
 import (
-	"WasaText/service/consts"
-	"WasaText/service/database"
+	"WasaText/service/consts"   //constants for message types
+	"WasaText/service/database" // database operations
 	"encoding/json"
-	"github.com/julienschmidt/httprouter"
-	"net/http"
+	"github.com/julienschmidt/httprouter" //  library for handling HTTP routes.
+	"net/http"                            // for handling HTTP requests and responses
 )
 
+// h - function belongs to a router struct , w - send data back to client, r - incoming http request,
 func (h *_router) getConversation(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+
+	// Extracting Conversation Details from Request Body
 	var convUserId database.GetMessagesRequest
 	if err := json.NewDecoder(r.Body).Decode(&convUserId); err != nil {
 		HandleError(w, NewAPIError(err.Error(), http.StatusBadRequest))
 		return
 	}
 
+	// Extracting the User ID from Request Context
 	userVal := r.Context().Value(keyUserID)
 	userId, ok := userVal.(uint)
 	if !ok {
@@ -22,6 +26,7 @@ func (h *_router) getConversation(w http.ResponseWriter, r *http.Request, ps htt
 		return
 	}
 
+	// Fetching Messages from the Database
 	var messages *[]database.Message
 	var err error
 
@@ -39,8 +44,11 @@ func (h *_router) getConversation(w http.ResponseWriter, r *http.Request, ps htt
 		}
 	}
 
+	// Processing Messages for Response
 	var response []MessagesResponse
 
+	// Creates a messageMap to store messages by their IDs.
+	// Loops through messages to: extract emojis,identify replied messages
 	if messages != nil {
 		messageMap := make(map[uint]database.Message)
 		for _, message := range *messages {
@@ -65,7 +73,7 @@ func (h *_router) getConversation(w http.ResponseWriter, r *http.Request, ps htt
 					}
 				}
 			}
-
+			//// Building the Final Response, Adds each message to the response list.
 			if message.MessageType == consts.MessageTypeText {
 				response = append(response, MessagesResponse{
 					MessageId:           message.ID,
@@ -98,6 +106,7 @@ func (h *_router) getConversation(w http.ResponseWriter, r *http.Request, ps htt
 		}
 	}
 
+	// sending response
 	res := map[string][]MessagesResponse{"messages": response}
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(res)

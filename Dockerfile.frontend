@@ -1,7 +1,11 @@
+#Uses Node as the base image.
 FROM node:lts AS builder
+# Set the working directory
 WORKDIR /app
+# Copy package.json and install dependencies in webui
 COPY webui webui
 WORKDIR /app/webui
 RUN yarn run build-prod
+#Use nginx:latest as a production server.
 FROM nginx:stable
 COPY --from=builder /app/webui/dist /usr/share/nginx/html

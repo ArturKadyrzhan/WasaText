@@ -1,9 +1,14 @@
+# Use Go image as the base image an environment to compile the application.
 FROM golang:1.19.1 AS builder
+# Set the working directory inside the container
 WORKDIR /src/
+#  Copy the source code into the container
 COPY . .
+# Build the  application
 RUN go build -o /app/webapi ./cmd/webapi
 FROM debian:bullseye
 EXPOSE 3000 4000
 WORKDIR /app/
+# Copy the compiled binary from the builder stage
 COPY --from=builder /app/webapi ./
 CMD ["/app/webapi"]

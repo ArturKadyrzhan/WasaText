@@ -23,6 +23,7 @@ export default {
     };
   },
   methods: {
+    //find users to while adding new users to group
     async findUsers() {
       if (!this.searchQuery) {
         this.userSearchResult = [];
@@ -51,6 +52,8 @@ export default {
   handleProfilePhotoUpload(event) {
     this.profilePhoto = event.target.files[0];
   },
+
+  //create-group.go
   async createGroup() {
     if (!this.groupName || this.selectedUsers.length === 0 || !this.profilePhoto) {
       alert("Please provide a group name and invite at least one user and upload group photo.");
