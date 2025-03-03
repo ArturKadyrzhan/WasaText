@@ -227,10 +227,10 @@ export default {
       return;
     }
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('isGroup', isGroup);
-    formData.append('groupId', this.groupInfo.ID);
-    formData.append('toUserId', this.userInfo.ID);
+    formData.append('file', file); // Attaches the uploaded image (file) to the FormData object.
+    formData.append('isGroup', isGroup); // Appends whether the chat is a group or private chat.
+    formData.append('groupId', this.groupInfo.ID); // Appends groupId to FormData.
+    formData.append('toUserId', this.userInfo.ID); // Appends toUserId to FormData.
     console.log(formData)
     try {
       const response = await this.$axios.post("/message/send-photo", formData, {

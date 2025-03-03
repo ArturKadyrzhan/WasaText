@@ -221,8 +221,9 @@
              'Authorization':`Bearer ${getToken()}`,
            },
          });
-         this.users = response.data['result']['users'];
-         this.groups = response.data['result']['groups'];
+          // response.data contains the API response so we:
+         this.users = response.data['result']['users']; // extract the result object from the response.
+         this.groups = response.data['result']['groups']; // Extracts groups from response.data['result'].
          console.log(response.data)
        } catch (error) {
          console.log(error, "ERROR")
@@ -246,8 +247,9 @@
          const response = await this.$axios.get("/profile", {
            headers: { Authorization: `Bearer ${getToken()}` },
          });
-         this.username = response.data.profile.Username;
-         this.profileImage = response.data.profile.ProfilePhotoURL;
+         // again response.data contains the API response so we:
+         this.username = response.data.profile.Username; // Extracts  from response.data and store to this.username
+         this.profileImage = response.data.profile.ProfilePhotoURL; //same
          console.log(response.data)
          console.log(this.username)
          console.log(this.profileImage)
@@ -262,9 +264,9 @@
          console.error('Missing user ID. Cannot navigate to conversation.');
          return;
        }
-       const isGroup = userOrGroup.Name !== undefined;
-       const entity = encodeURIComponent(JSON.stringify(userOrGroup));
-       const isGroupParam = isGroup ? 'true' : 'false';
+       const isGroup = userOrGroup.Name !== undefined; // Checks if userOrGroup has a Name property, if exists=trie
+       const entity = encodeURIComponent(JSON.stringify(userOrGroup)); // Converts userOrGroup into a JSON string,encode to UI
+       const isGroupParam = isGroup ? 'true' : 'false'; //if isGroup is true => 'true' to isGroupParam, false->false
        window.location.href = `#/conversation?entity=${entity}&isGroup=${isGroupParam}`;
        window.location.reload();
      },
@@ -274,20 +276,20 @@
      },
      createGroup() {
        this.$router.push({
-         name: 'CreateGroup',
+         name: 'CreateGroup', //navigate to create group view
        });
      },
      updateGroup(groupId) {
        this.$router.push({
-         name: "UpdateGroup",
+         name: "UpdateGroup", //navigate to update group-view
          query: { groupId }
        });
      },
-    // Handles profile picture uploads.Converts file into a preview URL before uploading.
+    // update-view Handles profile picture uploads.Converts file into a preview URL before uploading.
      onFileChange(event) {
        const file = event.target.files[0];
        console.log(file)
-       if (file) {
+       if (file) { // Checks if file is null or undefined, If file exists, the function proceeds.
          this.selectedFile = file;
          this.previewUrl = URL.createObjectURL(file);
        }
@@ -297,8 +299,8 @@
      },
      // set-my-photo.go
      async uploadImage() {
-       const formData = new FormData();
-       formData.append("profile_picture", this.selectedFile);
+       const formData = new FormData(); //  new FormData object to store the file.
+       formData.append("profile_picture", this.selectedFile); // append (this.selectedFile) to FormData.
        try {
          const response = await this.$axios.post("/profile/photo", formData, {
            headers: {
