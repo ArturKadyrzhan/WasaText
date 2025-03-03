@@ -184,6 +184,7 @@
              'Authorization': `Bearer ${getToken()}`
            }
          });
+         //If successful, updates userSearchResult.
          this.userSearchResult = response.data['users'];
          console.log(this.userSearchResult, "USER")
        } catch (error) {
@@ -202,8 +203,8 @@
            username: this.username,
            password: this.password,
          });
+         // If successful, calls logIn() to save the session.
          logIn(response.data['token'], response.data['id'], response.data['username'])
-
        } catch (e) {
          console.log(e,"eror meror")
          this.errormsg = "Login failed. Please check your credentials.";
@@ -282,7 +283,6 @@
          query: { groupId }
        });
      },
-
     // Handles profile picture uploads.Converts file into a preview URL before uploading.
      onFileChange(event) {
        const file = event.target.files[0];

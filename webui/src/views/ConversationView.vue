@@ -56,6 +56,7 @@ export default {
 
     //get-messages.go
     async getMessages(id) {
+      // Checks whether the chat is a group or a private chat.
       const isGroup = this.groupInfo.ID === id;
       console.log(id)
       console.log(this.groupInfo.ID)

@@ -11,7 +11,7 @@ import (
 // h - function belongs to a router struct , w - send data back to client, r - incoming http request,
 func (h *_router) sendPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
-	// Extracting the User ID from Request Context ь
+	// Extracting the User ID from Request Context
 	userVal := r.Context().Value(keyUserID)
 	userId, ok := userVal.(uint) // Converts the extracted value into an unsigned integer
 	if !ok {

@@ -98,7 +98,6 @@ paths:
                     pattern: ".*"
                 required:
                   - error
-
   /users:     #2)path for retrieving users
     get:      # using get since we are retrieving information rather than modifying or creating anything.
       tags:

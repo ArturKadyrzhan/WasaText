@@ -10,14 +10,14 @@ import {getToken} from "../store/auth";
 export default {
   data() {
     return {
-      searchQuery: "",
-      userSearchResult: [],
-      groupName: "",
-      selectedUsers: [],
-      profilePhoto: null,
-      isEditing: false,
-      updatedGroupName: "",
-      updatedProfilePhoto: null,
+      searchQuery: "",  // for search input for finding users.
+      userSearchResult: [], // for results
+      groupName: "", // Stores the name of the created group
+      selectedUsers: [], // Stores users added to the group.
+      profilePhoto: null, // Stores the uploaded group profile photo.
+      isEditing: false, // Boolean to track if the group is being edited.
+      updatedGroupName: "", // Stores the new group name (for editing)
+      updatedProfilePhoto: null, // Stores the new profile photo (for editing).
       selectedGroup: null,
 
     };
@@ -26,40 +26,48 @@ export default {
     //find users to while adding new users to group
     async findUsers() {
       if (!this.searchQuery) {
-        this.userSearchResult = [];
+        this.userSearchResult = []; // if searchQuery is empty → If yes, clears userSearchResult and exits.
         return;
       }
-      try {
+      try { // we send GET request to /users?search=query → Searches for users.
         let response = await this.$axios.get(`/users?search=${this.searchQuery}`, {
-        headers: {
+        headers: { //  authentication token
           'Authorization': `Bearer ${getToken()}`
         }
       });
+      //If successful, updates userSearchResult.
       this.userSearchResult = response.data.users;
     } catch (error) {
+      // If an error occurs, logs the error and empty search results.
       console.error("Error fetching users:", error);
       this.userSearchResult = [];
     }
   },
+  // Checks if the user is already in selectedUsers.If not, adds them to the list
   addUserToGroup(user) {
     if (!this.selectedUsers.find((u) => u.ID === user.ID)) {
+      //Checks if the user is already in selectedUsers, if not we add him
       this.selectedUsers.push(user);
     }
   },
+    // removes-user
   removeUserFromGroup(user) {
     this.selectedUsers = this.selectedUsers.filter((u) => u.ID !== user.ID);
   },
+  // Capturing the selected file when the user uploads an image.
   handleProfilePhotoUpload(event) {
     this.profilePhoto = event.target.files[0];
   },
 
   //create-group.go
   async createGroup() {
+    // Validates required fields (
     if (!this.groupName || this.selectedUsers.length === 0 || !this.profilePhoto) {
       alert("Please provide a group name and invite at least one user and upload group photo.");
       return;
     }
-    const formData = new FormData();
+    // we create Form data object, fill required fields
+    const formData = new FormData(); //
     formData.append("groupName", this.groupName);
     formData.append("selectedUsers", JSON.stringify(this.selectedUsers));
 
@@ -70,7 +78,7 @@ export default {
       await this.$axios.post("/group", formData, {
         headers: {
           Authorization:` Bearer ${getToken()}`,
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "multipart/form-data", // WHAT I send
         },
       });
       window.location.reload();
