@@ -80,9 +80,9 @@ export default {
           id: message.message_id,
           message: message.message,
           isPhoto: message.is_photo,  // Checks if the message is an image.
-          isSent: message.user_id == getId(),
-          senderId:message.user_id,
-          forwarded_by_username:message.forwarded_by_username ?? "",
+          isSent: message.user_id == getId(), // Checks if the user sent the message.
+          senderId:message.user_id,             // Stores sender details.
+          forwarded_by_username:message.forwarded_by_username ?? "", // Stores replied message info.
           username: message.username ?? "",
           createdAt: message.createdAt ?? "",
           isReceived:true,
@@ -110,6 +110,7 @@ export default {
     // send-message.go
     async sendMessage() { // Pushes the new message into the chat window.
       if (this.newMessage.trim()) {
+        // Checks if the message is empty and Determines if the chat is a group chat.
         const isGroup = !!this.groupInfo.ID;
         let isReceived = false;
         const repliedMessageId = this.selectedReplyMessage?.id || 0;
@@ -128,6 +129,7 @@ export default {
           });
 
           if (response.data) {
+            // If the message was successfully sent, sets isReceived = true.
             isReceived = true
           }
           console.log('Message sent:', response.data);
@@ -136,6 +138,7 @@ export default {
           this.messages.pop();
         }
         const messageToSend = {
+          // Creates a new message object and adds it to messages.
           username:this.authUsername,
           message: this.newMessage,
           isSent: true,
@@ -143,6 +146,7 @@ export default {
           createdAt: Date(),
           isReceived:isReceived,
         };
+        // Resets the input field after sending and Handles sending messages to the backend.
         this.messages.push(messageToSend);
         this.newMessage = "";
         this.$nextTick(() => {
