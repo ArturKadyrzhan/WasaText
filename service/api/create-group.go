@@ -7,6 +7,7 @@ import (
 	"net/http"                            // for handling http requests and responses
 )
 
+// h - function belongs to a router struct , w - send data back to client, r - incoming http request,
 func (h *_router) createGroup(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 	// Extracting the User ID from the Request Context and error handling

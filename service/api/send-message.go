@@ -7,6 +7,7 @@ import (
 	"net/http"                            //   for handling HTTP requests and responses
 )
 
+// h - function belongs to a router struct , w - send data back to client, r - incoming http request,
 func (h *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 	// Extracting Message Data from Request Body

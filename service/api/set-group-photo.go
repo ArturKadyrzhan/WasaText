@@ -7,6 +7,7 @@ import (
 	"strconv"                             //  Used to convert strings to numbers
 )
 
+// h - function belongs to a router struct , w - send data back to client, r - incoming http request
 func (h *_router) setGroupPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 	// Extracting the Group ID from Request Data
