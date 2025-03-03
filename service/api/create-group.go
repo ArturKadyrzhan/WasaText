@@ -18,6 +18,7 @@ func (h *_router) createGroup(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
+	//  parse an incoming multipart/form-data request.
 	err := r.ParseMultipartForm(10 << 20) // Parsing Multipart Form Data (limit 10 MB)
 	if err != nil {
 		HandleError(w, NewAPIError("Unable to parse form data", http.StatusUnprocessableEntity))

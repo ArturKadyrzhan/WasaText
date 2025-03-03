@@ -35,7 +35,7 @@ paths:
         description: "User credentials object"
         required: true
         content:
-          application/json: #data should be in JSON format
+          application/json: #datashould be in JSON format
             schema:
               type: object  #in body of request we send object
               description: "User credentials for login"
