@@ -1,7 +1,7 @@
 ## Pref
 **WasaText — Simple text messanger**
 
-**This project was developed for educational purposes.Project based Exam of "Web and Software Architecture" course.**
+**This project was developed for educational purposes. Project based exam of "Web and Software Architecture" course.**
 
 Distributed full-stack web application designed to simulate a modern messaging system.
 
